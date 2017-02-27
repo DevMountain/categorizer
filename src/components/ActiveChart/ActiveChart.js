@@ -43,7 +43,7 @@ export default class ActiveChart extends Component {
 		].join( "," );
 
 		return Object.assign( dataset, {
-			backgroundColor: `rgba(${ randomColor }, 0.2)`
+			  backgroundColor: `rgba(${ randomColor }, 0.2)`
 			, borderColor: `rgba(${ randomColor }, 1)`
 			, pointBackgroundColor: `rgba(${ randomColor }, 1)`
 			, pointBorderColor: "#ffffff"
