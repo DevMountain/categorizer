@@ -1,0 +1,6 @@
+.active-chart {
+	align-items: center;
+	display: flex;
+	height: 100%;
+	flex: 1;
+}

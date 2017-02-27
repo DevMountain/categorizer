@@ -1,0 +1,43 @@
+.new-chart {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+}
+
+.new-chart__form-group {
+	align-items: center;
+	display: flex;
+	margin-bottom: 7px;
+}
+
+.new-chart__label {
+	flex: 1;
+	margin-right: 8px;
+}
+
+.new-chart__input {
+	box-sizing: border-box;
+	flex: 3;
+	font-size: 14px;
+	height: 22px;
+	padding: 0 3px;
+}
+
+.new-chart__labels-wrapper {
+	margin-bottom: 7px;
+}
+
+.new-chart__labels {
+	color: #8c878d;
+}
+
+.new-chart__submit {
+	background-color: #5D73A2;
+	border: none;
+	color: #ffffff;
+	cursor: pointer;
+	font-size: 18px;
+	height: 28px;
+	width: 100%;
+}
