@@ -194,6 +194,34 @@ ReactDOM.render(
 
 </details>
 
+<details>
+
+<summary>`src/components/App.js`</summary>
+
+```javascript
+import React, { Component } from "react";
+import { connect } from "react-redux";
+
+import "./App.css";
+
+import NewChart from "./NewChart/NewChart";
+import Sidebar from "./Sidebar/Sidebar";
+
+class App extends Component { /* App component definition */ }
+
+function mapStateToProps( state ) {
+	return {
+		  activeChart: state.charts[ state.activeChartIndex ]
+		, charts: state.charts
+	};
+}
+
+export default connect( mapStateToProps )( App );
+
+```
+
+</details>
+
 </details>
 
 ### Step 2
