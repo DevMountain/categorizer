@@ -91,17 +91,72 @@ That's it for step 1! Nothing appears to have changed, but we've laid the ground
 
 <summary>`src/ducks/chart.js`</summary>
 
+```javascript
+const initialState = {
+	  activeChartIndex: 0
+	, charts: [ {
+		  labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ]
+		, name: "Example Chart"
+		, datasets: [
+			{
+				  label: "My First dataset"
+				, data: [65, 59, 90, 81, 56, 55, 40]
+			}
+			, {
+				  label: "My Second dataset"
+				, data: [28, 48, 40, 19, 96, 27, 100]
+			}
+		]
+	} ]
+};
+
+export default function chart( state = initialState, action ) {
+	switch ( action.type ) {
+		default: return state;
+	}
+}
+
+```
+
 </details>
 
 <details>
 
 <summary>`src/store.js`</summary>
 
+```javascript
+import { createStore } from "redux";
+
+import chart from "./ducks/chart";
+
+export default createStore( chart );
+```
+
 </details>
 
 <details>
 
 <summary>`src/index.js`</summary>
+
+```javascript
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+
+import "./index.css";
+
+import store from "./store";
+
+import App from "./components/App";
+
+ReactDOM.render(
+	<Provider store={ store }>
+		<App />
+	</Provider>,
+	document.getElementById( 'root' )
+);
+
+```
 
 </details>
 
