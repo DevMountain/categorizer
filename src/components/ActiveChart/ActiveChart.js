@@ -12,11 +12,7 @@ import Chart from "chart.js";
 import "./ActiveChart.css";
 
 export default class ActiveChart extends Component {
-	static get propTypes() {
-		return {
-			chart: PropTypes.object.isRequired
-		};
-	}
+	static propTypes = { chart: PropTypes.object.isRequired };
 
 	constructor( props ) {
 		super( props );

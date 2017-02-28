@@ -3,16 +3,10 @@ import React, { Component, PropTypes } from "react";
 import "./AddDataset.css";
 
 export default class AddDataset extends Component {
-	static get propTypes() {
-		return {
-			  addDataset: PropTypes.func.isRequired
-			, labels: PropTypes.arrayOf( PropTypes.string ).isRequired
-		}
-	}
-
-	constructor( props ) {
-		super( props );
-	}
+	static propTypes = {
+		  addDataset: PropTypes.func.isRequired
+		, labels: PropTypes.arrayOf( PropTypes.string ).isRequired
+	};
 
 	render() {
 		return (

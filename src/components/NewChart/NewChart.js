@@ -3,15 +3,7 @@ import React, { Component, PropTypes } from "react";
 import "./NewChart.css";
 
 export default class NewChart extends Component {
-	constructor( props ) {
-		super( props );
-	}
-
-	static get propTypes() {
-		return {
-			createChart: PropTypes.func.isRequired
-		};
-	}
+	static propTypes = { createChart: PropTypes.func.isRequired };
 
 	render() {
 		return (

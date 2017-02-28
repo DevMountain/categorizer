@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PropTypes } from "react";
 
 import "./Sidebar.css";
 
@@ -18,3 +18,8 @@ export default function Sidebar() {
 		</aside>
 	);
 }
+
+Sidebar.propTypes = {
+	  charts: PropTypes.arrayOf( PropTypes.object ).isRequired
+	, setActiveChartIndex: PropTypes.func.isRequired
+};
