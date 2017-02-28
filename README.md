@@ -30,6 +30,7 @@ The first step will be focused on the initial setup required to make a Redux app
 * Create `src/store.js`
 * Create the Redux store in `src/store.js`
 * Connect the application to Redux in `src/index.js`
+* Connect the `App` component definition to Redux
 
 **Detailed Instructions**
 
@@ -79,7 +80,40 @@ Now that the bones of the reducer are in place, we can create the application's 
 
 What is Redux doing behind the scenes here? When Redux first initializes it will call the `chart` reducer function passing `undefined` as the first argument and a dummy action as the second argument. Our function will return the default state value of `initialState`, giving Redux an initial value to work with.
 
-Finally, it is time to connect the React application to Redux. In `src/index.js` import `Provider` from React Redux and `store` from `src/store.js`. Wrap the `App` component in the `Provider` component, passing `store` as a prop to `Provider`.  `Provider` is simply a wrapper component that gives the rest of the application access to the `store`.
+Now to connect the React application to Redux. In `src/index.js` import `Provider` from React Redux and `store` from `src/store.js`. Wrap the `App` component in the `Provider` component, passing `store` as a prop to `Provider`.  `Provider` is simply a wrapper component that gives the rest of the application access to the `store`.
+
+Finally, in `src/components/App.js` import `connect` from React Redux. Underneath the component definition create a function named ``mapStateToProps` that takes a single parameter `state`. This function is how we tell Redux which pieces of state a component is interested in as well as the format they are passed in. We want all of the state data, but we also want to make life a little easier on ourselves, so `mapStateToProps` will return an object with two properties:
+
+* `activeChart` - Set equal to `charts[ state.activeChartIndex ]`
+* `charts` - Set equal to `state.charts`
+
+Note that we aren't simply returning `{ activeChartIndex: state.activeChartIndex, charts: state.charts }`, instead we are grabbing a reference to the actual active chart itself. Now we can access it easily throughout our components!
+
+To finish connecting the `App` component definition we need to create a decorator by invoking `connect` and passing in `mapStateToProps`, then invoke the decorator passing in `App`. Export the decorated component by default. Decorators take some getting used to, so here's a reminder:
+
+<details>
+
+<summary>Decorator Example</summary>
+
+```javascript
+function mapStateToProps( state ) {
+    return state;
+}
+const decorator = connect( mapStateToProps );
+const decoratedComponent = decorator( App );
+export default decoratedComponent;
+```
+
+This is usually shortened to
+
+```javascript
+function mapStateToProps( state ) {
+    return state;
+}
+export default connect( mapStateToProps )( App );
+```
+
+</details>
 
 That's it for step 1! Nothing appears to have changed, but we've laid the groundwork we'll build on over the next steps!
 
@@ -161,6 +195,31 @@ ReactDOM.render(
 </details>
 
 </details>
+
+### Step 2
+
+**Summary**
+
+In this step we will be creating our first action type/creator and modifying the reducer to be able to handle the action.
+
+**Instructions**
+
+* Create a `CREATE_CHART` action type and corresponding action creator
+* Modify the `chart` reducer to handle to handle adding a new chart
+
+**Detailed Instructions**
+
+We'll begin this step inside of `src/ducks/chart.js`. At the top of the file create an action type `CREATE_CHART` and set it equal to `"CREATE_CHART"`. This action type is how we tell our reducer what has prompted a state change.
+
+Underneath the `chart` reducer, create and export a function named `createChart`. `createChart` will take in two parameters:
+
+* `labels` - An array of labels that the chart will have
+* `name` - The name of the chart specified by the user
+
+`createChart` should return an object with two properties:
+
+* `chart` - An object containing the `labels` and `name` parameters
+* `type` - The action type, in this case `CREATE_CHART`
 
 ## Contributions
 
