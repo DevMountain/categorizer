@@ -328,7 +328,7 @@ In this step we'll implement the ability to create charts in the `NewChart` comp
 
 We'll begin this step in `src/components/App.js`. Import `createChart` from `src/ducks/chart.js`. If we were to invoke `createChart` in our component right now, what would happen? Would Redux receive the action?
 
-It wouldn't! `createChart` is just a function that returns an action object. To send the action to Redux we need to wrap it in Redux's [`dispatch`](http://redux.js.org/docs/api/Store.html#dispatch) function. Luckily React Redux's `connect` can do just that for us. As the second argument to `connect` (after `mapStateToProps`) pass an object containing the `createChart` function. This will place `createChart` on `App`'s props as well as wrapping it in `dispatch` for us.
+It wouldn't! `createChart` is just a function that returns an action object. To send the action to Redux we need to wrap it in Redux's [`dispatch`](http://redux.js.org/docs/api/Store.html#dispatch) function. Luckily React Redux's `connect` can do just that for us. As the second argument to `connect` (after `mapStateToProps`) pass an object containing the `createChart` function.
 
 <details>
 
@@ -373,7 +373,7 @@ Next up we'll need a `handleChange` method so we can accept user input. `handleC
 * `field` - The name of the field that is changing, i.e `"name"` or `"newLabel"`
 * `event` - The DOM event triggering the change and carrying the new value
 
-All this method needs to do is update the specified field on state with the value on the event. It will look something like this: `this.setState( { [ field ]: event.target.value } );`.  Before we attach this method to the JSX, let's `bind` in the constructor, because we have to handle changes from two different fields, we'll need to bind twice. It will look like this:
+All this method needs to do is update the specified field on state with the value on the event. It will look something like this: `this.setState( { [ field ]: event.target.value } );`.  Before we attach this method to the JSX, let's `bind` in the constructor. Because we have to handle changes from two different fields, we'll need to bind twice. It will look like this:
 
 ```javascript
 constructor( props ) {
@@ -390,7 +390,7 @@ constructor( props ) {
 }
 ```
 
-Now we can dive into the JSX to make use of what we have so far! At the top of `render` destructure `labels`, `name`, and `newLabel` from `this.state`. Both inputs will need two new props:
+Now we can dive into the JSX to make use of what we have so far! At the top of `render` destructure `labels`, `name`, and `newLabel` from `this.state`. Both `input` elements will need two new props:
 
 * `value` - set equal to `name` or `newLabel` respectively
 * `onChange` - set equal to `handleNameChange` or `handleNewLabelChange` respectively
@@ -443,6 +443,44 @@ You're now able to send all the data necessary for creating a chart to the reduc
 <summary>`src/components/App.js`</summary>
 
 ```jsx
+import React, { Component } from "react";
+import { connect } from "react-redux";
+
+import "./App.css";
+
+import { createChart } from "../ducks/chart";
+
+import NewChart from "./NewChart/NewChart";
+import Sidebar from "./Sidebar/Sidebar";
+
+class App extends Component {
+	render() {
+		const { createChart } = this.props;
+		return (
+			<div className="app">
+				<Sidebar />
+				<main className="app__main">
+					<header className="app__header">
+						<h1 className="app__title">Categorizer</h1>
+
+						<div className="app__new-chart">
+							<NewChart createChart={ createChart } />
+						</div>
+					</header>
+				</main>
+			</div>
+		);
+	}
+}
+
+function mapStateToProps( { activeChartIndex, charts } ) {
+	return {
+		  activeChart: charts[ activeChartIndex ]
+		, charts
+	};
+}
+
+export default connect( mapStateToProps, { createChart } )( App );
 
 ```
 
@@ -453,6 +491,103 @@ You're now able to send all the data necessary for creating a chart to the reduc
 <summary>`src/components/NewChart/NewChart.js`</summary>
 
 ```jsx
+import React, { Component, PropTypes } from "react";
+
+import "./NewChart.css";
+
+export default class NewChart extends Component {
+	static propTypes = { createChart: PropTypes.func.isRequired };
+
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			  labels: []
+			, name: ""
+			, newLabel: ""
+		};
+
+		this.handleNameChange = this.handleChange.bind( this, "name" );
+		this.handleNewLabelChange = this.handleChange.bind( this, "newLabel" );
+		this.addLabel = this.addLabel.bind( this );
+		this.submitChart = this.submitChart.bind( this );
+	}
+
+	handleChange( field, event ) {
+		this.setState( { [ field ]: event.target.value } );
+	}
+
+	addLabel( event ) {
+		event.preventDefault();
+
+		this.setState( {
+			  labels: [ ...this.state.labels, this.state.newLabel ]
+			, newLabel: ""
+		} );
+	}
+
+	submitChart() {
+		const { labels, name } = this.state;
+
+		if ( !name || labels.length < 3 ) {
+			return;
+		}
+
+		this.props.createChart( labels, name );
+
+		this.setState( {
+			  labels: []
+			, name: ""
+			, newLabel: ""
+		} );
+	}
+
+	render() {
+		const {
+			  labels
+			, name
+			, newLabel
+		} = this.state;
+		return (
+			<div className="new-chart">
+				<div className="new-chart__form-group">
+					<label className="new-chart__label">Chart Name:</label>
+					<input
+						className="new-chart__name new-chart__input"
+						onChange={ this.handleNameChange }
+						type="text"
+						value={ name }
+					/>
+				</div>
+				<form
+					className="new-chart__form-group"
+					onSubmit={ this.addLabel }
+				>
+					<label className="new-chart__label">Add Label:</label>
+					<input
+						className="new-chart__category new-chart__input"
+						onChange={ this.handleNewLabelChange }
+						required
+						type="text"
+						value={ newLabel }
+					/>
+				</form>
+
+				<div className="new-chart__labels-wrapper">
+					<label className="new-chart__label">Labels:</label>
+					<span className="new-chart__labels">[{ labels.join( ", " ) }](Min. 3)</span>
+				</div>
+
+				<button
+					className="new-chart__submit"
+					onClick={ this.submitChart }
+				>
+					Submit
+				</button>
+			</div>
+		);
+	}
+}
 
 ```
 
