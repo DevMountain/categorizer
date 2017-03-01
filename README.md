@@ -309,6 +309,57 @@ export function createChart( labels, name ) {
 
 </details>
 
+### Step 3
+
+**Summary**
+
+In this step we'll implement the ability to create charts in the `NewChart` component.
+
+**Instructions**
+
+* Import and connect the `createChart` action creator in `App`
+* Pass the `createChart` to the `NewChart` component
+* Alter the `NewChart` component definition to allow for handling user input
+* Use the `createChart` function to pass the user input to Redux
+
+**Detailed Instructions**
+
+We'll begin this step in `src/components/App.js`. Import `createChart` from `src/ducks/chart.js`. If we were to invoke `createChart` in our component right now, what would happen? Would Redux receive the action?
+
+It wouldn't! `createChart` is just a function that returns an action object. To send the action to Redux we need to wrap it in Redux's [`dispatch`](http://redux.js.org/docs/api/Store.html#dispatch) function. Luckily React Redux's `connect` can do just that for us. As the second argument to `connect` (after `mapStateToProps`) pass an object containing the `createChart` function. This will place `createChart` on `App`'s props as well as wrapping it in `dispatch` for us.
+
+<details>
+
+<summary>The magic behind `connect` wrapping action creators</summary>
+
+It may feel a little like magic, but the wrapping of action creators in dispatch is fairly simple! The actual source code will be different, but this is accomplishing the same thing.
+
+```javascript
+// Take in an object of action creators, i.e { createChart }
+function wrapActionCreator( actionCreatorsObject ) {
+	// A new object that will hold the wrapped action creators
+	const wrappedActionCreators = {};
+	// Iterate over each action creator in the object
+	for ( let actionCreator in actionCreatorsObject ) {
+		// Creating a new function to capture arguments to the action creator
+		// such as "labels" and "name"
+		wrappedActionCreators[ actionCreator ] = ( ...args ) => {
+			// Create the action, passing in the captured arguments
+			const action = actionCreatorsObject[ actionCreator ]( ...args );
+			// Dispatch the action to Redux
+			dispatch( action );
+		}
+	}
+	return wrappedActionCreators;
+}
+```
+
+___
+
+</details>
+
+All that is left to do in `App` is to pass `createChart` as a prop to the `NewChart` component.
+
 ## Contributions
 
 ### Contributions
