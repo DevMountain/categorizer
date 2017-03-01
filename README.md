@@ -209,7 +209,7 @@ In this step we will be connecting a component to Redux, creating our first acti
 
 **Detailed Instructions**
 
-This step will be in `src/ducks/chart.js`. At the top of the file create an action type `CREATE_CHART` and set it equal to `"CREATE_CHART"`. This action type is how we tell our reducer what has prompted a state change.
+This step will be in `src/ducks/chart.js`. At the top of the file create an action type `CREATE_CHART` and set it equal to `"CREATE_CHART"`. This action type is just a description of what happened used by the reducer to determine how to change state.
 
 Underneath the `chart` reducer, create and export a function named `createChart`. `createChart` will take in two parameters:
 
@@ -221,7 +221,7 @@ Underneath the `chart` reducer, create and export a function named `createChart`
 * `chart` - An object containing the necessary chart data: `{ labels, name, datasets: [] }`
 * `type` - The action type, in this case `CREATE_CHART`
 
-With the action creator ready to go, we now need to update the reducer function itself to handle the action. Add a new `case` to the `switch` statement that checks the `action.type` against `CREATE_CHART` (remember to put this above the default case, or it will never run!). This case should return a new state object where
+With the action creator ready to go, we now need to update the reducer function itself to handle the action. Add a new `case` to the `switch` statement that checks the `action.type` against `CREATE_CHART` (put this above the default case, or it will never run!). This case should return a new state object where
 
 * `charts` is an array of `action.chart` and all the past `charts` on state
 * `activeChartIndex` is set to `0`, the index of the newly created chart.
