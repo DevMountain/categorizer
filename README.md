@@ -113,6 +113,8 @@ function mapStateToProps( state ) {
 export default connect( mapStateToProps )( App );
 ```
 
+___
+
 </details>
 
 That's it for step 1! Nothing appears to have changed, but we've laid the groundwork we'll build on over the next steps!
@@ -306,6 +308,155 @@ export function createChart( labels, name ) {
 }
 
 ```
+
+</details>
+
+### Step 3
+
+**Summary**
+
+In this step we'll implement the ability to create charts in the `NewChart` component.
+
+**Instructions**
+
+* Import and connect the `createChart` action creator in `App`
+* Pass the `createChart` to the `NewChart` component
+* Alter the `NewChart` component definition to allow for handling user input
+* Use the `createChart` function to pass the user input to Redux
+
+**Detailed Instructions**
+
+We'll begin this step in `src/components/App.js`. Import `createChart` from `src/ducks/chart.js`. If we were to invoke `createChart` in our component right now, what would happen? Would Redux receive the action?
+
+It wouldn't! `createChart` is just a function that returns an action object. To send the action to Redux we need to wrap it in Redux's [`dispatch`](http://redux.js.org/docs/api/Store.html#dispatch) function. Luckily React Redux's `connect` can do just that for us. As the second argument to `connect` (after `mapStateToProps`) pass an object containing the `createChart` function. This will place `createChart` on `App`'s props as well as wrapping it in `dispatch` for us.
+
+<details>
+
+<summary>The magic behind `connect` wrapping action creators</summary>
+
+It may feel a little like magic, but the wrapping of action creators in dispatch is fairly simple! The actual source code will be different, but this is accomplishing the same thing.
+
+```javascript
+// Take in an object of action creators, i.e { createChart }
+function wrapActionCreator( actionCreatorsObject ) {
+	// A new object that will hold the wrapped action creators
+	const wrappedActionCreators = {};
+	// Iterate over each action creator in the object
+	for ( let actionCreator in actionCreatorsObject ) {
+		// Creating a new function to capture arguments to the action creator
+		// such as "labels" and "name"
+		wrappedActionCreators[ actionCreator ] = ( ...args ) => {
+			// Create the action, passing in the captured arguments
+			const action = actionCreatorsObject[ actionCreator ]( ...args );
+			// Dispatch the action to Redux
+			dispatch( action );
+		}
+	}
+	return wrappedActionCreators;
+}
+```
+
+___
+
+</details>
+
+All that is left to do in `App` is to pass `createChart` as a prop to the `NewChart` component.
+
+Open up `src/components/NewChart/NewChart.js`. Get started by writing a `constructor` method (don't forget to `super( props );`!) where we'll create a `state` object with three properties:
+
+* `labels` - A list of the labels submitted so far. Defaults to an empty array
+* `name` - The text from the name input. Defaults to an empty string
+* `newLabel` - The text from the new label input. Defaults to an empty string
+
+Next up we'll need a `handleChange` method so we can accept user input. `handleChange` will take two arguments:
+
+* `field` - The name of the field that is changing, i.e `"name"` or `"newLabel"`
+* `event` - The DOM event triggering the change and carrying the new value
+
+All this method needs to do is update the specified field on state with the value on the event. It will look something like this: `this.setState( { [ field ]: event.target.value } );`.  Before we attach this method to the JSX, let's `bind` in the constructor, because we have to handle changes from two different fields, we'll need to bind twice. It will look like this:
+
+```javascript
+constructor( props ) {
+	super( props );
+
+	this.state = {
+		  labels: []
+		, name: ""
+		, newLabel: ""
+	};
+
+	this.handleNameChange = this.handleChange.bind( this, "name" );
+	this.handleNewLabelChange = this.handleChange.bind( this, "newLabel" );
+}
+```
+
+Now we can dive into the JSX to make use of what we have so far! At the top of `render` destructure `labels`, `name`, and `newLabel` from `this.state`. Both inputs will need two new props:
+
+* `value` - set equal to `name` or `newLabel` respectively
+* `onChange` - set equal to `handleNameChange` or `handleNewLabelChange` respectively
+
+Next we need to add a way for users to save their labels, we'll do that by creating a new method `addLabel`. `addLabel` will take a single `event` parameter. What this method needs to do is call `event.preventDefault()`, add `this.state.newLabel` to `this.state.labels`, and reset `this.state.newLabel` to an empty string. It will look something like this:
+
+```javascript
+addLabel( event ) {
+	// We need to prevent default because this will be attached to a form
+	// element. Without this, the browser will reload!
+	event.preventDefault();
+
+	this.setState( {
+		  labels: [ ...this.state.labels, this.state.newLabel ]
+		, newLabel: ""
+	} );
+}
+```
+
+Bind `addLabel` in the `constructor` and then pass it to the `onSubmit` prop of the form containing the "Add Label" input. To let the user see what labels they have already added add the following code inside of the `[]` brackets in the `new-chart__labels` span - `{ labels.join( ", " ) }`. With these changes you should be able to enter labels and see them populate below as you hit enter.
+
+Finally we need to send all this data to our reducer! To do this we'll need one more method - `submitChart` which won't take any parameters. Destructure `labels` and `name` from `this.state` so we can do a little bit of form validation. If `name` is an empty string or there are less than 3 labels we will just return early. Next we need to call `this.props.createChart` (our action creator passed down from app) passing in `labels` and `name`. Lastly, reset `this.state` to its initial value. Bind `submitChart` in the `constructor` and pass it to the `onClick` handler of the submit button. It will look like this:
+
+```javascript
+submitChart() {
+	const { labels, name } = this.state;
+
+	if ( !name || labels.length < 3 ) {
+		return;
+	}
+
+	this.props.createChart( labels, name );
+
+	this.setState( {
+		  labels: []
+		, name: ""
+		, newLabel: ""
+	} );
+}
+```
+
+You're now able to send all the data necessary for creating a chart to the reducer! Unfortunately the chart isn't visible yet, but we'll cover that in the next step.
+
+<details>
+
+<summary>**Code Solution** </summary>
+
+<details>
+
+<summary>`src/components/App.js`</summary>
+
+```jsx
+
+```
+
+</details>
+
+<details>
+
+<summary>`src/components/NewChart/NewChart.js`</summary>
+
+```jsx
+
+```
+
+</details>
 
 </details>
 
