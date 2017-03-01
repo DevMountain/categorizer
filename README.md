@@ -443,44 +443,6 @@ You're now able to send all the data necessary for creating a chart to the reduc
 <summary>`src/components/App.js`</summary>
 
 ```jsx
-import React, { Component } from "react";
-import { connect } from "react-redux";
-
-import "./App.css";
-
-import { createChart } from "../ducks/chart";
-
-import NewChart from "./NewChart/NewChart";
-import Sidebar from "./Sidebar/Sidebar";
-
-class App extends Component {
-	render() {
-		const { createChart } = this.props;
-		return (
-			<div className="app">
-				<Sidebar />
-				<main className="app__main">
-					<header className="app__header">
-						<h1 className="app__title">Categorizer</h1>
-
-						<div className="app__new-chart">
-							<NewChart createChart={ createChart } />
-						</div>
-					</header>
-				</main>
-			</div>
-		);
-	}
-}
-
-function mapStateToProps( { activeChartIndex, charts } ) {
-	return {
-		  activeChart: charts[ activeChartIndex ]
-		, charts
-	};
-}
-
-export default connect( mapStateToProps, { createChart } )( App );
 
 ```
 
@@ -491,109 +453,31 @@ export default connect( mapStateToProps, { createChart } )( App );
 <summary>`src/components/NewChart/NewChart.js`</summary>
 
 ```jsx
-import React, { Component, PropTypes } from "react";
-
-import "./NewChart.css";
-
-export default class NewChart extends Component {
-	static propTypes = { createChart: PropTypes.func.isRequired };
-
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			  labels: []
-			, name: ""
-			, newLabel: ""
-		};
-
-		this.handleNameChange = this.handleChange.bind( this, "name" );
-		this.handleNewLabelChange = this.handleChange.bind( this, "newLabel" );
-		this.addLabel = this.addLabel.bind( this );
-		this.submitChart = this.submitChart.bind( this );
-	}
-
-	handleChange( field, event ) {
-		this.setState( { [ field ]: event.target.value } );
-	}
-
-	addLabel( event ) {
-		event.preventDefault();
-
-		this.setState( {
-			  labels: [ ...this.state.labels, this.state.newLabel ]
-			, newLabel: ""
-		} );
-	}
-
-	submitChart() {
-		const { labels, name } = this.state;
-
-		if ( !name || labels.length < 3 ) {
-			return;
-		}
-
-		this.props.createChart( labels, name );
-
-		this.setState( {
-			  labels: []
-			, name: ""
-			, newLabel: ""
-		} );
-	}
-
-	render() {
-		const {
-			  labels
-			, name
-			, newLabel
-		} = this.state;
-		return (
-			<div className="new-chart">
-				<div className="new-chart__form-group">
-					<label className="new-chart__label">Chart Name:</label>
-					<input
-						className="new-chart__name new-chart__input"
-						onChange={ this.handleNameChange }
-						type="text"
-						value={ name }
-					/>
-				</div>
-				<form
-					className="new-chart__form-group"
-					onSubmit={ this.addLabel }
-				>
-					<label className="new-chart__label">Add Label:</label>
-					<input
-						className="new-chart__category new-chart__input"
-						onChange={ this.handleNewLabelChange }
-						required
-						type="text"
-						value={ newLabel }
-					/>
-				</form>
-
-				<div className="new-chart__labels-wrapper">
-					<label className="new-chart__label">Labels:</label>
-					<span className="new-chart__labels">[{ labels.join( ", " ) }](Min. 3)</span>
-				</div>
-
-				<button
-					className="new-chart__submit"
-					onClick={ this.submitChart }
-				>
-					Submit
-				</button>
-			</div>
-		);
-	}
-}
 
 ```
 
 </details>
 
 </details>
+
+### Step 4
+
+**Summary**
+
+In this step we will be rendering the chart, and updating the sidebar to list all past charts.
+
+**Instructions**
+
+* Render the `ActiveChart` component into `App`
+* Pass the `activeChart` prop to the `ActiveChart` component
+* Create `SET_ACTIVE_CHART` action type/creator
+* Connect the `SET_ACTIVE_CHART` action creator to `App`
+* Pass `charts` and `setActiveChart` props to `Sidebar`
+* Refactor `Sidebar` to display a list of past charts
+
+**Detailed Instructions**
+
+After all the hard work we've done so far, it's time to finally display a chart! Start by opening up `src/components/App.js`. Inside of the `render` method, just beneath the closing `</header>` tag, add a div with the class `app__new-chart`. Import the `ActiveChart` component from `src/components/ActiveChart/ActiveChart.js` and place it inside of the freshly created div, passing `activeChart` (which we are getting via our Redux props) to the `chart` prop.
 
 ## Contributions
 
