@@ -112,7 +112,6 @@ function mapStateToProps( state ) {
 }
 export default connect( mapStateToProps )( App );
 ```
-___
 
 </details>
 
@@ -195,41 +194,13 @@ ReactDOM.render(
 
 </details>
 
-<details>
-
-<summary>`src/components/App.js`</summary>
-
-```javascript
-import React, { Component } from "react";
-import { connect } from "react-redux";
-
-import "./App.css";
-
-import NewChart from "./NewChart/NewChart";
-import Sidebar from "./Sidebar/Sidebar";
-
-class App extends Component { /* App component definition */ }
-
-function mapStateToProps( state ) {
-	return {
-		  activeChart: state.charts[ state.activeChartIndex ]
-		, charts: state.charts
-	};
-}
-
-export default connect( mapStateToProps )( App );
-
-```
-
-</details>
-
 </details>
 
 ### Step 2
 
 **Summary**
 
-In this step we will be creating our first action type/creator and modifying the reducer to be able to handle the action.
+In this step we will be connecting a component to Redux, creating our first action type/creator, and modifying the reducer to be able to handle the action.
 
 **Instructions**
 
@@ -238,7 +209,7 @@ In this step we will be creating our first action type/creator and modifying the
 
 **Detailed Instructions**
 
-We'll begin this step inside of `src/ducks/chart.js`. At the top of the file create an action type `CREATE_CHART` and set it equal to `"CREATE_CHART"`. This action type is how we tell our reducer what has prompted a state change.
+This step will be in `src/ducks/chart.js`. At the top of the file create an action type `CREATE_CHART` and set it equal to `"CREATE_CHART"`. This action type is just a description of what happened used by the reducer to determine how to change state.
 
 Underneath the `chart` reducer, create and export a function named `createChart`. `createChart` will take in two parameters:
 
@@ -247,8 +218,96 @@ Underneath the `chart` reducer, create and export a function named `createChart`
 
 `createChart` should return an object with two properties:
 
-* `chart` - An object containing the `labels` and `name` parameters
+* `chart` - An object containing the necessary chart data: `{ labels, name, datasets: [] }`
 * `type` - The action type, in this case `CREATE_CHART`
+
+With the action creator ready to go, we now need to update the reducer function itself to handle the action. Add a new `case` to the `switch` statement that checks the `action.type` against `CREATE_CHART` (put this above the default case, or it will never run!). This case should return a new state object where
+
+* `charts` is an array of `action.chart` and all the past `charts` on state
+* `activeChartIndex` is set to `0`, the index of the newly created chart.
+
+Remember not to mutate state! You should be returning a brand new object based on the values from the previous object.
+
+We'll hook this action up to the GUI in the next step, but for now you can test your reducer by calling it manually and examining the result. `chart( undefined, createChart( [ "foo", "bar", "baz" ], "test" ) );` should return something like this:
+
+```javascript
+{
+  "activeChartIndex": 0,
+  "charts": [
+    {
+      "labels": [
+        "foo",
+        "bar",
+        "baz"
+      ],
+      "name": "test",
+      "datasets": []
+    },
+    {
+      "labels": [ /* labels */ ],
+      "name": "Example Chart",
+      "datasets": [
+        {
+          "label": "My First dataset",
+          "data": [ /* numbers */ ]
+        },
+        {
+          "label": "My Second dataset",
+          "data": [ /* numbers */ ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+<details>
+
+<summary>**Code Solution**</summary>
+
+```javascript
+// src/ducks/chart.js
+const CREATE_CHART = "CREATE_CHART";
+
+const initialState = {
+	  activeChartIndex: 0
+	, charts: [ {
+		  labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ]
+		, name: "Example Chart"
+		, datasets: [
+			{
+				  label: "My First dataset"
+				, data: [65, 59, 90, 81, 56, 55, 40]
+			}
+			, {
+				  label: "My Second dataset"
+				, data: [28, 48, 40, 19, 96, 27, 100]
+			}
+		]
+	} ]
+};
+
+export default function chart( state = initialState, action ) {
+	switch ( action.type ) {
+		case CREATE_CHART:
+			return {
+				  activeChartIndex: 0
+				, charts: [ action.chart, ...state.charts ]
+			};
+		default: return state;
+	}
+}
+
+export function createChart( labels, name ) {
+	return {
+		  chart: { labels, name, datasets: [] }
+		, type: CREATE_CHART
+	}
+}
+
+```
+
+</details>
 
 ## Contributions
 
