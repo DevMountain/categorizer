@@ -328,7 +328,7 @@ In this step we'll implement the ability to create charts in the `NewChart` comp
 
 We'll begin this step in `src/components/App.js`. Import `createChart` from `src/ducks/chart.js`. If we were to invoke `createChart` in our component right now, what would happen? Would Redux receive the action?
 
-It wouldn't! `createChart` is just a function that returns an action object. To send the action to Redux we need to wrap it in Redux's [`dispatch`](http://redux.js.org/docs/api/Store.html#dispatch) function. Luckily React Redux's `connect` can do just that for us. As the second argument to `connect` (after `mapStateToProps`) pass an object containing the `createChart` function. This will place `createChart` on `App`'s props as well as wrapping it in `dispatch` for us.
+It wouldn't! `createChart` is just a function that returns an action object. To send the action to Redux we need to wrap it in Redux's [`dispatch`](http://redux.js.org/docs/api/Store.html#dispatch) function. Luckily React Redux's `connect` can do just that for us. As the second argument to `connect` (after `mapStateToProps`) pass an object containing the `createChart` function.
 
 <details>
 
@@ -373,7 +373,7 @@ Next up we'll need a `handleChange` method so we can accept user input. `handleC
 * `field` - The name of the field that is changing, i.e `"name"` or `"newLabel"`
 * `event` - The DOM event triggering the change and carrying the new value
 
-All this method needs to do is update the specified field on state with the value on the event. It will look something like this: `this.setState( { [ field ]: event.target.value } );`.  Before we attach this method to the JSX, let's `bind` in the constructor, because we have to handle changes from two different fields, we'll need to bind twice. It will look like this:
+All this method needs to do is update the specified field on state with the value on the event. It will look something like this: `this.setState( { [ field ]: event.target.value } );`.  Before we attach this method to the JSX, let's `bind` in the constructor. Because we have to handle changes from two different fields, we'll need to bind twice. It will look like this:
 
 ```javascript
 constructor( props ) {
@@ -390,7 +390,7 @@ constructor( props ) {
 }
 ```
 
-Now we can dive into the JSX to make use of what we have so far! At the top of `render` destructure `labels`, `name`, and `newLabel` from `this.state`. Both inputs will need two new props:
+Now we can dive into the JSX to make use of what we have so far! At the top of `render` destructure `labels`, `name`, and `newLabel` from `this.state`. Both `input` elements will need two new props:
 
 * `value` - set equal to `name` or `newLabel` respectively
 * `onChange` - set equal to `handleNameChange` or `handleNewLabelChange` respectively
