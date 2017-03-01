@@ -113,6 +113,8 @@ function mapStateToProps( state ) {
 export default connect( mapStateToProps )( App );
 ```
 
+___
+
 </details>
 
 That's it for step 1! Nothing appears to have changed, but we've laid the groundwork we'll build on over the next steps!
@@ -359,6 +361,104 @@ ___
 </details>
 
 All that is left to do in `App` is to pass `createChart` as a prop to the `NewChart` component.
+
+Open up `src/components/NewChart/NewChart.js`. Get started by writing a `constructor` method (don't forget to `super( props );`!) where we'll create a `state` object with three properties:
+
+* `labels` - A list of the labels submitted so far. Defaults to an empty array
+* `name` - The text from the name input. Defaults to an empty string
+* `newLabel` - The text from the new label input. Defaults to an empty string
+
+Next up we'll need a `handleChange` method so we can accept user input. `handleChange` will take two arguments:
+
+* `field` - The name of the field that is changing, i.e `"name"` or `"newLabel"`
+* `event` - The DOM event triggering the change and carrying the new value
+
+All this method needs to do is update the specified field on state with the value on the event. It will look something like this: `this.setState( { [ field ]: event.target.value } );`.  Before we attach this method to the JSX, let's `bind` in the constructor, because we have to handle changes from two different fields, we'll need to bind twice. It will look like this:
+
+```javascript
+constructor( props ) {
+	super( props );
+
+	this.state = {
+		  labels: []
+		, name: ""
+		, newLabel: ""
+	};
+
+	this.handleNameChange = this.handleChange.bind( this, "name" );
+	this.handleNewLabelChange = this.handleChange.bind( this, "newLabel" );
+}
+```
+
+Now we can dive into the JSX to make use of what we have so far! At the top of `render` destructure `labels`, `name`, and `newLabel` from `this.state`. Both inputs will need two new props:
+
+* `value` - set equal to `name` or `newLabel` respectively
+* `onChange` - set equal to `handleNameChange` or `handleNewLabelChange` respectively
+
+Next we need to add a way for users to save their labels, we'll do that by creating a new method `addLabel`. `addLabel` will take a single `event` parameter. What this method needs to do is call `event.preventDefault()`, add `this.state.newLabel` to `this.state.labels`, and reset `this.state.newLabel` to an empty string. It will look something like this:
+
+```javascript
+addLabel( event ) {
+	// We need to prevent default because this will be attached to a form
+	// element. Without this, the browser will reload!
+	event.preventDefault();
+
+	this.setState( {
+		  labels: [ ...this.state.labels, this.state.newLabel ]
+		, newLabel: ""
+	} );
+}
+```
+
+Bind `addLabel` in the `constructor` and then pass it to the `onSubmit` prop of the form containing the "Add Label" input. To let the user see what labels they have already added add the following code inside of the `[]` brackets in the `new-chart__labels` span - `{ labels.join( ", " ) }`. With these changes you should be able to enter labels and see them populate below as you hit enter.
+
+Finally we need to send all this data to our reducer! To do this we'll need one more method - `submitChart` which won't take any parameters. Destructure `labels` and `name` from `this.state` so we can do a little bit of form validation. If `name` is an empty string or there are less than 3 labels we will just return early. Next we need to call `this.props.createChart` (our action creator passed down from app) passing in `labels` and `name`. Lastly, reset `this.state` to its initial value. Bind `submitChart` in the `constructor` and pass it to the `onClick` handler of the submit button. It will look like this:
+
+```javascript
+submitChart() {
+	const { labels, name } = this.state;
+
+	if ( !name || labels.length < 3 ) {
+		return;
+	}
+
+	this.props.createChart( labels, name );
+
+	this.setState( {
+		  labels: []
+		, name: ""
+		, newLabel: ""
+	} );
+}
+```
+
+You're now able to send all the data necessary for creating a chart to the reducer! Unfortunately the chart isn't visible yet, but we'll cover that in the next step.
+
+<details>
+
+<summary>**Code Solution** </summary>
+
+<details>
+
+<summary>`src/components/App.js`</summary>
+
+```jsx
+
+```
+
+</details>
+
+<details>
+
+<summary>`src/components/NewChart/NewChart.js`</summary>
+
+```jsx
+
+```
+
+</details>
+
+</details>
 
 ## Contributions
 
