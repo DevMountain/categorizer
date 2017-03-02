@@ -675,6 +675,106 @@ Sidebar.propTypes = {
 
 </details>
 
+### Step 5
+
+**Summary**
+
+In this step we will be creating the reducer logic that allows the adding of datasets.
+
+**Instructions**
+
+* Create an `ADD_DATASET` action type and corresponding action creator
+* Alter the `chart` reducer to handle the new action type
+* Connect the `addDataset` action creator to `App`
+* Render the `AddDataset` component into `App`, passing the `addDataset` action creator as a prop
+
+**Detailed Instructions**
+
+We'll begin this step in `src/ducks/chart.js`. Create a new action type of `ADD_DATASET` at the top of the file. Underneath the reducer create the corresponding action creator - `addDataset`. `addDataset` will take a single parameter `dataset` and return an object with two properties
+
+* `type` set equal to `ADD_DATASET`
+* `dataset` set equal to the `dataset` parameter. This will be an array of numbers that corresponds to the labels on the chart.
+
+Lastly we need to update the reducer to handle this action. Add a `case` checking the `action.type` against `ADD_DATASET`. For this `case` we will need to return a new object where:
+
+* `activeChartIndex` is set equal to `state.activeChartIndex`
+* `charts` is is a copy of `state.charts` with the a new dataset added to the active chart
+
+It will look something like this
+```javascript
+// Note the brackets around this case. This prevents variables
+// from leeching into a different scope.
+case ADD_DATASET: {
+	// Saving ourselves some typing and clean up code by destructuring
+	// values we will be using often.
+	const { activeChartIndex, charts } = state;
+	const activeChart = charts[ activeChartIndex ];
+	return {
+		  activeChartIndex
+		, charts: [
+			  // Making a copy of all the charts before the active chart
+			  ...charts.slice( 0, activeChartIndex )
+			  // Replacing the active chart with a modified copy
+			, Object.assign(
+				  {}
+				, activeChart
+				, { datasets: [ ...activeChart.datasets, action.dataset }
+			)
+			  // Making a copy of all the charts after the active chart
+			, ...charts.slice( activeChartIndex + 1, charts.length )
+		]
+	}
+}
+```
+
+That's it for this reducer, now we can finish up this step in `src/components/App.js`. Import `addDataset` from `src/ducks/chart.js` and `AddDataset` from `src/components/AddDataset/AddDataset.js`. Add `addDataset` to the action creators object that is being passed to `connect` and destructure it from `this.props` in `render`.
+
+Add the `AddDataset` component into `App`'s `render` method just below `ActiveChart`, passing two props:
+
+* `addDataset` - The `addDataset` action creator
+* `labels` - Set equal to `activeChart.labels`
+
+You should now see the skeleton of the `AddDataset` component to the right of the chart. We can't do much with it, but we'll fix that in the next step!
+
+<details>
+
+<summary>**Code Solution**</summary>
+
+<details>
+
+<summary>`src/ducks/chart.js`</summary>
+
+```javascript
+
+```
+
+</details>
+
+<summary>`src/components/App.js`</summary>
+
+```jsx
+
+```
+
+</details>
+
+</details>
+
+### Step 6
+
+**Summary**
+
+In this step we will be updating the `AddDataset` component so a user can add data to their charts.
+
+**Instructions**
+
+* Alter the `AddDataset` component to display a dynamic list of `input`s based on a chart's labels
+* Alter the `AddDataset` component to handle user input and allow submitting of datasets
+
+**Detailed Instructions**
+
+
+
 ## Contributions
 
 ### Contributions
