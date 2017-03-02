@@ -519,7 +519,57 @@ Replace the static `<li>` element and its contents with the `pastCharts` variabl
 <summary>`src/components/App.js`</summary>
 
 ```jsx
+import React, { Component } from "react";
+import { connect } from "react-redux";
 
+import "./App.css";
+
+import { createChart, setActiveChartIndex } from "../ducks/chart";
+
+import ActiveChart from "./ActiveChart/ActiveChart";
+import NewChart from "./NewChart/NewChart";
+import Sidebar from "./Sidebar/Sidebar";
+
+class App extends Component {
+	render() {
+		const {
+			  activeChart
+			, charts
+			, createChart
+			, setActiveChartIndex
+		} = this.props;
+
+		return (
+			<div className="app">
+				<Sidebar
+					charts={ charts }
+					setActiveChartIndex={ setActiveChartIndex }
+				/>
+				<main className="app__main">
+					<header className="app__header">
+						<h1 className="app__title">Categorizer</h1>
+
+						<div className="app__new-chart">
+							<NewChart createChart={ createChart } />
+						</div>
+					</header>
+					<div className="app__active-chart">
+						<ActiveChart chart={ activeChart } />
+					</div>
+				</main>
+			</div>
+		);
+	}
+}
+
+function mapStateToProps( { activeChartIndex, charts } ) {
+	return {
+		  activeChart: charts[ activeChartIndex ]
+		, charts
+	};
+}
+
+export default connect( mapStateToProps, { createChart, setActiveChartIndex } )( App );
 ```
 
 </details>
@@ -529,7 +579,53 @@ Replace the static `<li>` element and its contents with the `pastCharts` variabl
 <summary>`src/ducks/chart.js`</summary>
 
 ```javascript
+const CREATE_CHART = "CREATE_CHART";
+const SET_ACTIVE_CHART_INDEX = "SET_ACTIVE_CHART_INDEX";
 
+const initialState = {
+	  activeChartIndex: 0
+	, charts: [ {
+		  labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ]
+		, name: "Example Chart"
+		, datasets: [
+			{
+				  label: "My First dataset"
+				, data: [65, 59, 90, 81, 56, 55, 40]
+			}
+			, {
+				  label: "My Second dataset"
+				, data: [28, 48, 40, 19, 96, 27, 100]
+			}
+		]
+	} ]
+};
+
+export default function chart( state = initialState, action ) {
+	switch ( action.type ) {
+		case CREATE_CHART:
+			return {
+				  activeChartIndex: 0
+				, charts: [ action.chart, ...state.charts ]
+			};
+		case SET_ACTIVE_CHART_INDEX:
+			return {
+				  activeChartIndex: action.index
+				, charts: state.charts
+			};
+		default: return state;
+	}
+}
+
+export function createChart( labels, name ) {
+	return {
+		  chart: { labels, name, datasets: [] }
+		, type: CREATE_CHART
+	}
+}
+
+export function setActiveChartIndex( index ) {
+	return { index, type: SET_ACTIVE_CHART_INDEX };
+}
 ```
 
 </details>
@@ -539,7 +635,40 @@ Replace the static `<li>` element and its contents with the `pastCharts` variabl
 <summary>`src/components/Sidebar.js`</summary>
 
 ```jsx
+import React, { PropTypes } from "react";
 
+import "./Sidebar.css";
+
+export default function Sidebar( { charts, setActiveChartIndex } ) {
+	const pastCharts = charts.map( ( chart, index ) => (
+		<li
+			className="sidebar__past-chart"
+			key={ chart.name }
+		>
+			<p
+				className="sidebar__chart-name"
+				onClick={ () => setActiveChartIndex( index ) }
+			>
+				{ chart.name }
+			</p>
+			<p className="sidebar__chart-datasets">{ chart.datasets.length } Datasets</p>
+		</li>
+	) );
+	return (
+		<aside className="sidebar">
+			<h3 className="sidebar__title">Past Charts</h3>
+
+			<ul className="sidebar__past-charts">
+				{ pastCharts }
+			</ul>
+		</aside>
+	);
+}
+
+Sidebar.propTypes = {
+	  charts: PropTypes.arrayOf( PropTypes.object ).isRequired
+	, setActiveChartIndex: PropTypes.func.isRequired
+};
 ```
 
 </details>
