@@ -818,6 +818,8 @@ export function setActiveChartIndex( index ) {
 
 </details>
 
+<details>
+
 <summary>`src/components/App.js`</summary>
 
 ```jsx
