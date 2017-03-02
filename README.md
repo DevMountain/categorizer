@@ -443,44 +443,6 @@ You're now able to send all the data necessary for creating a chart to the reduc
 <summary>`src/components/App.js`</summary>
 
 ```jsx
-import React, { Component } from "react";
-import { connect } from "react-redux";
-
-import "./App.css";
-
-import { createChart } from "../ducks/chart";
-
-import NewChart from "./NewChart/NewChart";
-import Sidebar from "./Sidebar/Sidebar";
-
-class App extends Component {
-	render() {
-		const { createChart } = this.props;
-		return (
-			<div className="app">
-				<Sidebar />
-				<main className="app__main">
-					<header className="app__header">
-						<h1 className="app__title">Categorizer</h1>
-
-						<div className="app__new-chart">
-							<NewChart createChart={ createChart } />
-						</div>
-					</header>
-				</main>
-			</div>
-		);
-	}
-}
-
-function mapStateToProps( { activeChartIndex, charts } ) {
-	return {
-		  activeChart: charts[ activeChartIndex ]
-		, charts
-	};
-}
-
-export default connect( mapStateToProps, { createChart } )( App );
 
 ```
 
@@ -491,103 +453,86 @@ export default connect( mapStateToProps, { createChart } )( App );
 <summary>`src/components/NewChart/NewChart.js`</summary>
 
 ```jsx
-import React, { Component, PropTypes } from "react";
 
-import "./NewChart.css";
+```
 
-export default class NewChart extends Component {
-	static propTypes = { createChart: PropTypes.func.isRequired };
+</details>
 
-	constructor( props ) {
-		super( props );
+</details>
 
-		this.state = {
-			  labels: []
-			, name: ""
-			, newLabel: ""
-		};
+### Step 4
 
-		this.handleNameChange = this.handleChange.bind( this, "name" );
-		this.handleNewLabelChange = this.handleChange.bind( this, "newLabel" );
-		this.addLabel = this.addLabel.bind( this );
-		this.submitChart = this.submitChart.bind( this );
-	}
+**Summary**
 
-	handleChange( field, event ) {
-		this.setState( { [ field ]: event.target.value } );
-	}
+In this step we will be rendering the chart, and updating the sidebar to list all past charts.
 
-	addLabel( event ) {
-		event.preventDefault();
+**Instructions**
 
-		this.setState( {
-			  labels: [ ...this.state.labels, this.state.newLabel ]
-			, newLabel: ""
-		} );
-	}
+* Render the `ActiveChart` component into `App`
+* Pass the `activeChart` prop to the `ActiveChart` component
+* Create `SET_ACTIVE_CHART` action type/creator
+* Connect the `setActiveChart` action creator to `App`
+* Pass `charts` and `setActiveChart` props to `Sidebar`
+* Refactor `Sidebar` to display a list of past charts
 
-	submitChart() {
-		const { labels, name } = this.state;
+**Detailed Instructions**
 
-		if ( !name || labels.length < 3 ) {
-			return;
-		}
+After all the hard work we've done so far, it's time to finally display a chart! Start by opening up `src/components/App.js` and import `ActiveChart` from `src/components/ActiveChart/ActiveChart`. At the top of the `render` method, destructure `activeChart` and `charts` from `this.props`. Inside of the `render` method's `return`, just beneath the closing `</header>` tag, add a div with the class `app__new-chart`. Place the `ActiveChart` component into this new div and give it a `chart` prop set equal to the `activeChart` object we are getting from Redux.
 
-		this.props.createChart( labels, name );
+The example chart from initial state should now be showing up in the page! And if you create another chart, the new one will replace the example.
 
-		this.setState( {
-			  labels: []
-			, name: ""
-			, newLabel: ""
-		} );
-	}
+Now that we can create and actually _see_ multiple charts (even if we can't add data to them yet) we need a way to navigate between them. We'll set up the logic for this in`src/ducks/chart.js`. At the top of the file create a new action type of `SET_ACTIVE_CHART` set equal to `"SET_ACTIVE_CHART"`. Underneath the reducer create a `setActiveChart` action creator that takes a single parameter `index` and returns an object with a `type` property of `SET_ACTIVE_CHART` and an `index` property set equal to the `index` parameter. Lastly we need to handle this action in the `chart` reducer, luckily this will be pretty easy. Add a `case` checking against `SET_ACTIVE_CHART`, this `case` should return a new state object where `activeChartIndex` is set equal to `action.index` and `charts` is set equal to `state.charts`.
 
-	render() {
-		const {
-			  labels
-			, name
-			, newLabel
-		} = this.state;
-		return (
-			<div className="new-chart">
-				<div className="new-chart__form-group">
-					<label className="new-chart__label">Chart Name:</label>
-					<input
-						className="new-chart__name new-chart__input"
-						onChange={ this.handleNameChange }
-						type="text"
-						value={ name }
-					/>
-				</div>
-				<form
-					className="new-chart__form-group"
-					onSubmit={ this.addLabel }
-				>
-					<label className="new-chart__label">Add Label:</label>
-					<input
-						className="new-chart__category new-chart__input"
-						onChange={ this.handleNewLabelChange }
-						required
-						type="text"
-						value={ newLabel }
-					/>
-				</form>
+Head back over to `src/components/App.js` and import the new `setActiveChart` action creator. Add `setActiveChart` as another property to the action creators object passed to `connect` and destructure it from `this.props` in `App`'s `render` method. Pass two new props to `Sidebar` - `charts` and `setActiveChart`.
 
-				<div className="new-chart__labels-wrapper">
-					<label className="new-chart__label">Labels:</label>
-					<span className="new-chart__labels">[{ labels.join( ", " ) }](Min. 3)</span>
-				</div>
+Open up `src/components/Sidebar/Sidebar.js`. We'll need to `map` over the charts passed to this component to create a list of charts. Above the `return` create a new variable named `pastCharts` and set it equal to the result of mapping over `charts` and returning the following JSX:
 
-				<button
-					className="new-chart__submit"
-					onClick={ this.submitChart }
-				>
-					Submit
-				</button>
-			</div>
-		);
-	}
-}
+```jsx
+<li
+	className="sidebar__past-chart"
+	key={ chart.name }
+>
+	<p
+		className="sidebar__chart-name"
+		onClick={ () => setActiveChartIndex( index ) }
+	>
+		{ chart.name }
+	</p>
+	<p className="sidebar__chart-datasets">{ chart.datasets.length } Datasets</p>
+</li>
+```
+
+Replace the static `<li>` element and its contents with the `pastCharts` variable. You should now be able to create multiple charts and navigate between them by clicking on the appropriate sidebar links.
+
+<details>
+
+<summary>**Code Solution**</summary>
+
+<details>
+
+<summary>`src/components/App.js`</summary>
+
+```jsx
+
+```
+
+</details>
+
+<details>
+
+<summary>`src/ducks/chart.js`</summary>
+
+```javascript
+
+```
+
+</details>
+
+<details>
+
+<summary>`src/components/Sidebar.js`</summary>
+
+```jsx
 
 ```
 
