@@ -2,7 +2,7 @@ import React, { PropTypes } from "react";
 
 import "./Sidebar.css";
 
-export default function Sidebar() {
+export default function Sidebar( { charts, setActiveChartIndex } ) {
 	return (
 		<aside className="sidebar">
 			<h3 className="sidebar__title">Past Charts</h3>
