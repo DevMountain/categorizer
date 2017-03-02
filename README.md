@@ -690,7 +690,7 @@ In this step we will be creating the reducer logic that allows the adding of dat
 
 **Detailed Instructions**
 
-We'll begin this step in `src/ducks/chart.js`. Create a new action type of `ADD_DATASET` at the top of the file. Underneath the reducer create the corresponding action creator - `addDataset`. `addDataset` will take a single parameter `dataset` and return an object with two properties
+We'll begin this step in `src/ducks/chart.js`. Create a new action type of `ADD_DATASET` at the top of the file. Underneath the reducer create and export the corresponding action creator - `addDataset`. `addDataset` will take a single parameter `dataset` and return an object with two properties
 
 * `type` set equal to `ADD_DATASET`
 * `dataset` set equal to the `dataset` parameter. This will be an array of numbers that corresponds to the labels on the chart.
@@ -718,7 +718,7 @@ case ADD_DATASET: {
 			, Object.assign(
 				  {}
 				, activeChart
-				, { datasets: [ ...activeChart.datasets, action.dataset }
+				, { datasets: [ ...activeChart.datasets, action.dataset ] }
 			)
 			  // Making a copy of all the charts after the active chart
 			, ...charts.slice( activeChartIndex + 1, charts.length )
