@@ -745,6 +745,74 @@ You should now see the skeleton of the `AddDataset` component to the right of th
 <summary>`src/ducks/chart.js`</summary>
 
 ```javascript
+const ADD_DATASET = "ADD_DATASET";
+const CREATE_CHART = "CREATE_CHART";
+const SET_ACTIVE_CHART_INDEX = "SET_ACTIVE_CHART_INDEX";
+
+const initialState = {
+	  activeChartIndex: 0
+	, charts: [ {
+		  labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ]
+		, name: "Example Chart"
+		, datasets: [
+			{
+				  label: "My First dataset"
+				, data: [65, 59, 90, 81, 56, 55, 40]
+			}
+			, {
+				  label: "My Second dataset"
+				, data: [28, 48, 40, 19, 96, 27, 100]
+			}
+		]
+	} ]
+};
+
+export default function chart( state = initialState, action ) {
+	switch ( action.type ) {
+		case ADD_DATASET: {
+			const { activeChartIndex, charts } = state;
+			const activeChart = charts[ activeChartIndex ];
+			return {
+				  activeChartIndex
+				, charts: [
+					  ...charts.slice( 0, activeChartIndex )
+					, Object.assign(
+						  {}
+						, activeChart
+						, { datasets: [ ...activeChart.datasets, action.dataset ] }
+					)
+					, ...charts.slice( activeChartIndex + 1, charts.length )
+				]
+			}
+		}
+		case CREATE_CHART:
+			return {
+				  activeChartIndex: 0
+				, charts: [ action.chart, ...state.charts ]
+			};
+		case SET_ACTIVE_CHART_INDEX:
+			return {
+				  activeChartIndex: action.index
+				, charts: state.charts
+			};
+		default: return state;
+	}
+}
+
+export function addDataset( dataset ) {
+	return { dataset, type: ADD_DATASET };
+}
+
+export function createChart( labels, name ) {
+	return {
+		  chart: { labels, name, datasets: [] }
+		, type: CREATE_CHART
+	}
+}
+
+export function setActiveChartIndex( index ) {
+	return { index, type: SET_ACTIVE_CHART_INDEX };
+}
 
 ```
 
@@ -753,6 +821,63 @@ You should now see the skeleton of the `AddDataset` component to the right of th
 <summary>`src/components/App.js`</summary>
 
 ```jsx
+import React, { Component } from "react";
+import { connect } from "react-redux";
+
+import "./App.css";
+
+import { addDataset, createChart, setActiveChartIndex } from "../ducks/chart";
+
+import ActiveChart from "./ActiveChart/ActiveChart";
+import AddDataset from "./AddDataset/AddDataset";
+import NewChart from "./NewChart/NewChart";
+import Sidebar from "./Sidebar/Sidebar";
+
+class App extends Component {
+	render() {
+		const {
+			  activeChart
+			, addDataset
+			, charts
+			, createChart
+			, setActiveChartIndex
+		} = this.props;
+
+		return (
+			<div className="app">
+				<Sidebar
+					charts={ charts }
+					setActiveChartIndex={ setActiveChartIndex }
+				/>
+				<main className="app__main">
+					<header className="app__header">
+						<h1 className="app__title">Categorizer</h1>
+
+						<div className="app__new-chart">
+							<NewChart createChart={ createChart } />
+						</div>
+					</header>
+					<div className="app__active-chart">
+						<ActiveChart chart={ activeChart } />
+						<AddDataset
+							addDataset={ addDataset }
+							labels={ activeChart.labels }
+						/>
+					</div>
+				</main>
+			</div>
+		);
+	}
+}
+
+function mapStateToProps( { activeChartIndex, charts } ) {
+	return {
+		  activeChart: charts[ activeChartIndex ]
+		, charts
+	};
+}
+
+export default connect( mapStateToProps, { addDataset, createChart, setActiveChartIndex } )( App );
 
 ```
 
