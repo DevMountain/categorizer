@@ -519,10 +519,226 @@ Replace the static `<li>` element and its contents with the `pastCharts` variabl
 <summary>`src/components/App.js`</summary>
 
 ```jsx
+import React, { Component } from "react";
+import { connect } from "react-redux";
 
+import "./App.css";
+
+import { createChart, setActiveChartIndex } from "../ducks/chart";
+
+import ActiveChart from "./ActiveChart/ActiveChart";
+import NewChart from "./NewChart/NewChart";
+import Sidebar from "./Sidebar/Sidebar";
+
+class App extends Component {
+	render() {
+		const {
+			  activeChart
+			, charts
+			, createChart
+			, setActiveChartIndex
+		} = this.props;
+
+		return (
+			<div className="app">
+				<Sidebar
+					charts={ charts }
+					setActiveChartIndex={ setActiveChartIndex }
+				/>
+				<main className="app__main">
+					<header className="app__header">
+						<h1 className="app__title">Categorizer</h1>
+
+						<div className="app__new-chart">
+							<NewChart createChart={ createChart } />
+						</div>
+					</header>
+					<div className="app__active-chart">
+						<ActiveChart chart={ activeChart } />
+					</div>
+				</main>
+			</div>
+		);
+	}
+}
+
+function mapStateToProps( { activeChartIndex, charts } ) {
+	return {
+		  activeChart: charts[ activeChartIndex ]
+		, charts
+	};
+}
+
+export default connect( mapStateToProps, { createChart, setActiveChartIndex } )( App );
 ```
 
 </details>
+
+<details>
+
+<summary>`src/ducks/chart.js`</summary>
+
+```javascript
+const CREATE_CHART = "CREATE_CHART";
+const SET_ACTIVE_CHART_INDEX = "SET_ACTIVE_CHART_INDEX";
+
+const initialState = {
+	  activeChartIndex: 0
+	, charts: [ {
+		  labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ]
+		, name: "Example Chart"
+		, datasets: [
+			{
+				  label: "My First dataset"
+				, data: [65, 59, 90, 81, 56, 55, 40]
+			}
+			, {
+				  label: "My Second dataset"
+				, data: [28, 48, 40, 19, 96, 27, 100]
+			}
+		]
+	} ]
+};
+
+export default function chart( state = initialState, action ) {
+	switch ( action.type ) {
+		case CREATE_CHART:
+			return {
+				  activeChartIndex: 0
+				, charts: [ action.chart, ...state.charts ]
+			};
+		case SET_ACTIVE_CHART_INDEX:
+			return {
+				  activeChartIndex: action.index
+				, charts: state.charts
+			};
+		default: return state;
+	}
+}
+
+export function createChart( labels, name ) {
+	return {
+		  chart: { labels, name, datasets: [] }
+		, type: CREATE_CHART
+	}
+}
+
+export function setActiveChartIndex( index ) {
+	return { index, type: SET_ACTIVE_CHART_INDEX };
+}
+```
+
+</details>
+
+<details>
+
+<summary>`src/components/Sidebar.js`</summary>
+
+```jsx
+import React, { PropTypes } from "react";
+
+import "./Sidebar.css";
+
+export default function Sidebar( { charts, setActiveChartIndex } ) {
+	const pastCharts = charts.map( ( chart, index ) => (
+		<li
+			className="sidebar__past-chart"
+			key={ chart.name }
+		>
+			<p
+				className="sidebar__chart-name"
+				onClick={ () => setActiveChartIndex( index ) }
+			>
+				{ chart.name }
+			</p>
+			<p className="sidebar__chart-datasets">{ chart.datasets.length } Datasets</p>
+		</li>
+	) );
+	return (
+		<aside className="sidebar">
+			<h3 className="sidebar__title">Past Charts</h3>
+
+			<ul className="sidebar__past-charts">
+				{ pastCharts }
+			</ul>
+		</aside>
+	);
+}
+
+Sidebar.propTypes = {
+	  charts: PropTypes.arrayOf( PropTypes.object ).isRequired
+	, setActiveChartIndex: PropTypes.func.isRequired
+};
+```
+
+</details>
+
+</details>
+
+### Step 5
+
+**Summary**
+
+In this step we will be creating the reducer logic that allows the adding of datasets.
+
+**Instructions**
+
+* Create an `ADD_DATASET` action type and corresponding action creator
+* Alter the `chart` reducer to handle the new action type
+* Connect the `addDataset` action creator to `App`
+* Render the `AddDataset` component into `App`, passing the `addDataset` action creator as a prop
+
+**Detailed Instructions**
+
+We'll begin this step in `src/ducks/chart.js`. Create a new action type of `ADD_DATASET` at the top of the file. Underneath the reducer create the corresponding action creator - `addDataset`. `addDataset` will take a single parameter `dataset` and return an object with two properties
+
+* `type` set equal to `ADD_DATASET`
+* `dataset` set equal to the `dataset` parameter. This will be an array of numbers that corresponds to the labels on the chart.
+
+Lastly we need to update the reducer to handle this action. Add a `case` checking the `action.type` against `ADD_DATASET`. For this `case` we will need to return a new object where:
+
+* `activeChartIndex` is set equal to `state.activeChartIndex`
+* `charts` is is a copy of `state.charts` with the a new dataset added to the active chart
+
+It will look something like this
+```javascript
+// Note the brackets around this case. This prevents variables
+// from leeching into a different scope.
+case ADD_DATASET: {
+	// Saving ourselves some typing and clean up code by destructuring
+	// values we will be using often.
+	const { activeChartIndex, charts } = state;
+	const activeChart = charts[ activeChartIndex ];
+	return {
+		  activeChartIndex
+		, charts: [
+			  // Making a copy of all the charts before the active chart
+			  ...charts.slice( 0, activeChartIndex )
+			  // Replacing the active chart with a modified copy
+			, Object.assign(
+				  {}
+				, activeChart
+				, { datasets: [ ...activeChart.datasets, action.dataset }
+			)
+			  // Making a copy of all the charts after the active chart
+			, ...charts.slice( activeChartIndex + 1, charts.length )
+		]
+	}
+}
+```
+
+That's it for this reducer, now we can finish up this step in `src/components/App.js`. Import `addDataset` from `src/ducks/chart.js` and `AddDataset` from `src/components/AddDataset/AddDataset.js`. Add `addDataset` to the action creators object that is being passed to `connect` and destructure it from `this.props` in `render`.
+
+Add the `AddDataset` component into `App`'s `render` method just below `ActiveChart`, passing two props:
+
+* `addDataset` - The `addDataset` action creator
+* `labels` - Set equal to `activeChart.labels`
+
+You should now see the skeleton of the `AddDataset` component to the right of the chart. We can't do much with it, but we'll fix that in the next step!
+
+<details>
+
+<summary>**Code Solution**</summary>
 
 <details>
 
@@ -534,9 +750,7 @@ Replace the static `<li>` element and its contents with the `pastCharts` variabl
 
 </details>
 
-<details>
-
-<summary>`src/components/Sidebar.js`</summary>
+<summary>`src/components/App.js`</summary>
 
 ```jsx
 
@@ -545,6 +759,21 @@ Replace the static `<li>` element and its contents with the `pastCharts` variabl
 </details>
 
 </details>
+
+### Step 6
+
+**Summary**
+
+In this step we will be updating the `AddDataset` component so a user can add data to their charts.
+
+**Instructions**
+
+* Alter the `AddDataset` component to display a dynamic list of `input`s based on a chart's labels
+* Alter the `AddDataset` component to handle user input and allow submitting of datasets
+
+**Detailed Instructions**
+
+
 
 ## Contributions
 
