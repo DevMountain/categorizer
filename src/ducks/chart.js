@@ -1,4 +1,5 @@
 const CREATE_CHART = "CREATE_CHART";
+const SET_ACTIVE_CHART_INDEX = "SET_ACTIVE_CHART_INDEX";
 
 const initialState = {
 	  activeChartIndex: 0
@@ -31,6 +32,11 @@ export default function chart( state = initialState, action ) {
 				  activeChartIndex: 0
 				, charts: [ action.chart, ...state.charts ]
 			};
+		case SET_ACTIVE_CHART_INDEX:
+			return {
+				  activeChartIndex: action.index
+				, charts: state.charts
+			};
 		default: return state;
 	}
 }
@@ -40,4 +46,8 @@ export function createChart( labels, name ) {
 		  chart: { labels, name, datasets: [] }
 		, type: CREATE_CHART
 	}
+}
+
+export function setActiveChartIndex( index ) {
+	return { index, type: SET_ACTIVE_CHART_INDEX };
 }
