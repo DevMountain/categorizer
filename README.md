@@ -5,6 +5,8 @@
 
 During this project we'll be building a web application that allows for easily categorizing information in radar charts. Users will be able to keep track of multiple categories, each category having multiple data sets. To keep track of this data and pass it to the correct components we'll make heavy use of Redux and React Redux.
 
+**A finished example can be found [here](https:/devmountain.github.io/categorizer)**
+
 
 ### Setup
 
