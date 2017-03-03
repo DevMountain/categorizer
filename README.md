@@ -1034,7 +1034,9 @@ In this step we will be updating the `AddDataset` component so a user can add da
 
 **Detailed Instructions**
 
-This step will take place in `src/components/AddDataset/AddDataset.js`. We'll get started by creating a `constructor` method and creating an initial state. Normally we would create a property on state for each input, but we could have any number of inputs. How should we set up state to handle a dynamic number of inputs? In our case, we'll use an array. `this.state` should have two properties:
+This step will take place in `src/components/AddDataset/AddDataset.js`. We'll get started by creating a `constructor` method and creating an initial state. Normally we would create a property on state for each input, but we could have any number of inputs. How should we set up state to handle a dynamic number of inputs? In our case, we'll use an array.
+
+`this.state` should have two properties:
 
 * `label` - The name of the dataset currently being created, corresponds to our one static input. Defaults to an empty string
 * `data` - The array where we will be storing values for the dataset. It will default to `new Array( props.labels.length ).fill( 0 )`. This will create an array with a length equal to the length of our data labels, then fill each index with `0`.
@@ -1084,7 +1086,9 @@ handleDataChange( changedIndex, event ) {
 }
 ```
 
-We'll also need a method to handle a change from the label input. `handleLabelChange` will take a single `event` parameter and will update `label` on state to equal `event.target.value`. Bind `handleLabelChange` in the constructor and pass it to the appropriate input's `onChange` prop. Pass `handleDataChange` to the data inputs, binding in `render` and passing `index` as an argument: `onChange={ this.handleDataChange.bind( this, index ) }`.
+We'll also need a method to handle a change from the label input. `handleLabelChange` will take a single `event` parameter and will update `label` on state to equal `event.target.value`.
+
+Bind `handleLabelChange` in the constructor and pass it to the appropriate input's `onChange` prop. Pass `handleDataChange` to the data inputs, binding in `render` and passing `index` as an argument: `onChange={ this.handleDataChange.bind( this, index ) }`.
 
 Lastly we need to be able to submit these datasets to Redux. Create a method `handleSubmit` that takes in an `event` parameter. This method will do the following:
 
@@ -1127,7 +1131,7 @@ Bug fixed! We're all done here!
 
 ### Black Diamond
 
-* Right now all data is lost on refresh, look into using [`localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)` to save a user's data.
+* Right now all data is lost on refresh, look into using [`localStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) to save a user's data.
 * Currently the color of datasets is randomized. Try allowing users to [select colors](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color) for their datasets.
 
 ## Contributions
