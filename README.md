@@ -1034,7 +1034,105 @@ In this step we will be updating the `AddDataset` component so a user can add da
 
 **Detailed Instructions**
 
+This step will take place in `src/components/AddDataset/AddDataset.js`. We'll get started by creating a `constructor` method and creating an initial state. Normally we would create a property on state for each input, but we could have any number of inputs. How should we set up state to handle a dynamic number of inputs? In our case, we'll use an array.
 
+`this.state` should have two properties:
+
+* `label` - The name of the dataset currently being created, corresponds to our one static input. Defaults to an empty string
+* `data` - The array where we will be storing values for the dataset. It will default to `new Array( props.labels.length ).fill( 0 )`. This will create an array with a length equal to the length of our data labels, then fill each index with `0`.
+
+With our `state` set up, let's jump into `render` and create the dynamic data inputs. Destructure `labels` from `this.props` as well as `data` and `label` from `this.state`. Create a new variable `labelInputs` and set it equal to the result of `map`ping over `labels` and returning the following JSX:
+
+```jsx
+<div
+	className="add-dataset__form-group"
+	key={ label }
+>
+	<label className="add-dataset__label">{ label }:</label>
+	<input
+		className="add-dataset__input"
+		max="100"
+		min="0"
+		required
+		type="number"
+		// Here is where we connect to this.state
+		// If we ever re-ordered our list this wouldn't work!
+		// Can you think of a solution that works even if the
+		// list were to be sorted or reversed?
+		value={ data[ index ] }
+	/>
+</div>
+```
+
+Render `labelInputs` just below the `div` with a class of `add-dataset__form-group`. While we're here, let's update the "Dataset Label" input. Pass the input a `value` prop set equal to `label`.
+
+Now we've got a list of inputs all defaulting to 0, let's write a method to edit them! Create a new method `handleDataChange` that takes two paremeters:
+
+* `changedIndex` - The index of the data input that changed
+* `event` - The DOM event that triggered the change handler and carries the new value
+
+This method will work in a very similar way as the `ADD_DATASET` handler in our `chart` reducer. We need to grab a copy of all the elements before the changed index, insert the updated value, and grab a copy of all the elements after the changed index. It will look something like this:
+
+```javascript
+handleDataChange( changedIndex, event ) {
+	const { data } = this.state;
+	this.setState( {
+		data: [
+			  ...data.slice( 0, changedIndex )
+			, parseInt( event.target.value, 10 )
+			, ...data.slice( changedIndex + 1, data.length )
+		]
+	} );
+}
+```
+
+We'll also need a method to handle a change from the label input. `handleLabelChange` will take a single `event` parameter and will update `label` on state to equal `event.target.value`.
+
+Bind `handleLabelChange` in the constructor and pass it to the appropriate input's `onChange` prop. Pass `handleDataChange` to the data inputs, binding in `render` and passing `index` as an argument: `onChange={ this.handleDataChange.bind( this, index ) }`.
+
+Lastly we need to be able to submit these datasets to Redux. Create a method `handleSubmit` that takes in an `event` parameter. This method will do the following:
+
+* Call `event.preventDefault` to stop the browser from taking its default action
+* Destructure `data` and `label` from `this.state`
+* Destructure `addDataset` and `labels` from `this.props`
+* Call the `addDataSet` action creator, passing an object with two properties as an argument
+	* `data` - Set equal to `data.map( datum => parseInt( datum, 10 ) )`
+	* `label` - Set equal to the `label` variable
+* Reset state back to its initial value
+
+Finally, bind `handleSubmit` in the constructor and pass it to the `form` element's `onSubmit` prop. You should now be able to create charts, navigate between charts, add datasets to existing charts, and see those datasets display!
+
+**But wait! A bug?**
+
+Uh oh, it looks like creating a chart with more labels than the active chart doesn't work properly! The extra inputs won't be given a default value and React will throw some angry warnings. What is happening here?
+
+The constructor is only invoked once, when the component is first created. This means that we are only creating the `data` array on state a single time, it never updates. To fix this we need to make use of one of React's lifecycle methods - `componentWillReceiveprops`. `componentWillReceiveProps` is called whenever props are passed to the component and takes a single argument `nextProps` - the new props being passed. What we need to do is check if `nextProps` does not equal `this.props`, and update `this.state.data` accordingly. It will look like this:
+
+```javascript
+componentWillReceiveProps( nextProps ) {
+	if ( nextProps !== this.props ) {
+		this.setState( { data: new Array( nextProps.labels.length ).fill( 0 ) } );
+	}
+}
+```
+
+Bug fixed! We're all done here!
+
+<details>
+
+<summary>**Code Solution**</summary>
+
+```jsx
+// src/components/AddDataset/AddDataset.js
+
+```
+
+</details>
+
+### Black Diamond
+
+* Right now all data is lost on refresh, look into using [`localStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) to save a user's data.
+* Currently the color of datasets is randomized. Try allowing users to [select colors](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color) for their datasets.
 
 ## Contributions
 
