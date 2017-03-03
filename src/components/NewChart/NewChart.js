@@ -55,6 +55,7 @@ export default class NewChart extends Component {
 			, name
 			, newLabel
 		} = this.state;
+
 		return (
 			<div className="new-chart">
 				<div className="new-chart__form-group">
