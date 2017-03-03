@@ -1,4 +1,5 @@
 import React from "react";
+import sinon from "sinon";
 import { shallow } from "enzyme";
 
 import Sidebar from "./Sidebar";
@@ -31,7 +32,7 @@ test( "sidebar displays chart names", () => {
 		/>
 	);
 
-	expect( sidebar.find( ".sidebar__past-chart" ).first().text().includes( "Foo" ) ).toBe( true );
+	expect( sidebar.find( ".sidebar__chart-name" ).first().text() ).toBe( "Foo" );
 } );
 
 test( "sidebar displays dataset counts", () => {
@@ -42,10 +43,24 @@ test( "sidebar displays dataset counts", () => {
 		/>
 	);
 
-	expect( sidebar.find( ".sidebar__past-chart" ).first().text().includes( 1 ) ).toBe( true );
-	expect( sidebar.find( ".sidebar__past-chart" ).last().text().includes( 0 ) ).toBe( true );
+	expect( sidebar.find( ".sidebar__chart-datasets" ).first().text() ).toBe( "1 Datasets" );
+	expect( sidebar.find( ".sidebar__chart-datasets" ).last().text() ).toBe( "0 Datasets" );
 } );
 
 test( "sidebar calls props.setActiveChartIndex on chart click", () => {
+	const setActiveChartIndexSpy = sinon.spy();
 
+	const sidebar = shallow(
+		<Sidebar
+			charts={ charts.slice() }
+			setActiveChartIndex={ setActiveChartIndexSpy }
+		/>
+	);
+
+	expect( setActiveChartIndexSpy.called ).toBe( false );
+
+	sidebar.find( ".sidebar__chart-name" ).first().simulate( "click" );
+
+	sinon.assert.calledOnce( setActiveChartIndexSpy );
+	expect( setActiveChartIndexSpy.firstCall.args[ 0 ] ).toBe( 0 );
 } );
