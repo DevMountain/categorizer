@@ -233,12 +233,11 @@ class App extends Component {
 
 export default connect(mapStateToProps)(App);
 
-function mapStateToProps(state) {
-	const charts = state.charts;
-	const activeChart = charts[state.activeChartIndex];
+function mapStateToProps( { activeChartIndex, charts } ) {
 	return {
-		activeChart, charts
-	}
+		  activeChart: charts[ activeChartIndex ]
+		, charts
+	};
 }
 ```
 
