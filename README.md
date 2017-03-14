@@ -1,3 +1,5 @@
+<img src="https://devmounta.in/img/logowhiteblue.png" width="250" align="right">
+
 # Categorizer
 <img src="https://raw.githubusercontent.com/DevMountain/categorizer/master/readme_assets/completed.png" />
 
