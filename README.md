@@ -1,3 +1,5 @@
+<img src="https://devmounta.in/img/logowhiteblue.png" width="250" align="right">
+
 # Categorizer
 <img src="https://raw.githubusercontent.com/DevMountain/categorizer/master/readme_assets/completed.png" />
 
@@ -44,7 +46,7 @@ Start by installing the following dependencies
 * [`redux`](http://redux.js.org/) - A state container for JavaScript applications. This library allows us to easily store and access information  from across an entire application.
 * [`react-redux`](https://github.com/reactjs/react-redux) - The official bindings to seamlessly connect a React application to Redux.
 
-As those install, create a new directory inside of `src` named `ducks`. This is the directory where our reducer will live. Inside of `src/ducks` create a file `chart.js`. `chart.js` will hold a reducer, action types, action creators, and the reducer's initial state.
+As those install, open the directory inside of `src` named `ducks`. This is the directory where our reducer will live. Inside of `src/ducks` create a file `chart.js`. `chart.js` will hold a reducer, action types, action creators, and the reducer's initial state.
 
 Open up `src/ducks/chart.js` and start by creating an `initialState` variable. `initialState` should be an object with two properties:
 
@@ -200,7 +202,48 @@ ReactDOM.render(
 ```
 
 </details>
+<details>
+<summary>`App.js`</summary>
+```
+javascript
+import React, { Component } from "react";
+import {connect} from "react-redux";
 
+import "./App.css";
+
+import NewChart from "./NewChart/NewChart";
+import Sidebar from "./Sidebar/Sidebar";
+
+class App extends Component {
+	render() {
+		return (
+			<div className="app">
+				<Sidebar />
+				<main className="app__main">
+					<header className="app__header">
+						<h1 className="app__title">Categorizer</h1>
+
+						<div className="app__new-chart">
+							<NewChart />
+						</div>
+					</header>
+				</main>
+			</div>
+		);
+	}
+}
+
+export default connect(mapStateToProps)(App);
+
+function mapStateToProps( { activeChartIndex, charts } ) {
+	return {
+		  activeChart: charts[ activeChartIndex ]
+		, charts
+	};
+}
+```
+
+</details>
 </details>
 
 ### Step 2
