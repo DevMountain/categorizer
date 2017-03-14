@@ -128,11 +128,11 @@ That's it for step 1! Nothing appears to have changed, but we've laid the ground
 
 <details>
 
-<summary>**Code Solution**</summary>
+<summary><b>Code Solution</b></summary>
 
 <details>
 
-<summary>`src/ducks/chart.js`</summary>
+<summary><code>src/ducks/chart.js</code></summary>
 
 ```javascript
 const initialState = {
@@ -165,7 +165,7 @@ export default function chart( state = initialState, action ) {
 
 <details>
 
-<summary>`src/store.js`</summary>
+<summary><code>src/store.js</code></summary>
 
 ```javascript
 import { createStore } from "redux";
@@ -179,9 +179,9 @@ export default createStore( chart );
 
 <details>
 
-<summary>`src/index.js`</summary>
+<summary><code>src/index.js</code></summary>
 
-```javascript
+```jsx
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
@@ -202,10 +202,12 @@ ReactDOM.render(
 ```
 
 </details>
+
 <details>
-<summary>`App.js`</summary>
-```
-javascript
+
+<summary><code>App.js</code></summary>
+
+```jsx
 import React, { Component } from "react";
 import {connect} from "react-redux";
 
@@ -244,6 +246,7 @@ function mapStateToProps( { activeChartIndex, charts } ) {
 ```
 
 </details>
+
 </details>
 
 ### Step 2
@@ -313,7 +316,7 @@ We'll hook this action up to the GUI in the next step, but for now you can test 
 
 <details>
 
-<summary>**Code Solution**</summary>
+<summary><b>Code Solution</b></summary>
 
 ```javascript
 // src/ducks/chart.js
@@ -380,7 +383,7 @@ It wouldn't! `createChart` is just a function that returns an action object. To 
 
 <details>
 
-<summary>The magic behind `connect` wrapping action creators</summary>
+<summary>The magic behind <code>connect</code> wrapping action creators</summary>
 
 It may feel a little like magic, but the wrapping of action creators in dispatch is fairly simple! The actual source code will be different, but this is accomplishing the same thing.
 
@@ -484,11 +487,11 @@ You're now able to send all the data necessary for creating a chart to the reduc
 
 <details>
 
-<summary>**Code Solution** </summary>
+<summary><b>Code Solution</b></summary>
 
 <details>
 
-<summary>`src/components/App.js`</summary>
+<summary><code>src/components/App.js</code></summary>
 
 ```jsx
 import React, { Component } from "react";
@@ -535,7 +538,7 @@ export default connect( mapStateToProps, { createChart } )( App );
 
 <details>
 
-<summary>`src/components/NewChart/NewChart.js`</summary>
+<summary><code>src/components/NewChart/NewChart.js</code></summary>
 
 ```jsx
 import React, { Component, PropTypes } from "react";
@@ -694,11 +697,11 @@ Replace the static `<li>` element and its contents with the `pastCharts` variabl
 
 <details>
 
-<summary>**Code Solution**</summary>
+<summary><b>Code Solution</b></summary>
 
 <details>
 
-<summary>`src/components/App.js`</summary>
+<summary><code>src/components/App.js</code></summary>
 
 ```jsx
 import React, { Component } from "react";
@@ -758,7 +761,7 @@ export default connect( mapStateToProps, { createChart, setActiveChartIndex } )(
 
 <details>
 
-<summary>`src/ducks/chart.js`</summary>
+<summary><code>src/ducks/chart.js</code></summary>
 
 ```javascript
 const CREATE_CHART = "CREATE_CHART";
@@ -814,7 +817,7 @@ export function setActiveChartIndex( index ) {
 
 <details>
 
-<summary>`src/components/Sidebar.js`</summary>
+<summary><code>src/components/Sidebar.js</code></summary>
 
 ```jsx
 import React, { PropTypes } from "react";
@@ -920,11 +923,11 @@ You should now see the skeleton of the `AddDataset` component to the right of th
 
 <details>
 
-<summary>**Code Solution**</summary>
+<summary><b>Code Solution</b></summary>
 
 <details>
 
-<summary>`src/ducks/chart.js`</summary>
+<summary><code>src/ducks/chart.js</code></summary>
 
 ```javascript
 const ADD_DATASET = "ADD_DATASET";
@@ -1002,7 +1005,7 @@ export function setActiveChartIndex( index ) {
 
 <details>
 
-<summary>`src/components/App.js`</summary>
+<summary><code>src/components/App.js</code></summary>
 
 ```jsx
 import React, { Component } from "react";
@@ -1168,7 +1171,7 @@ Bug fixed! We're all done here!
 
 <details>
 
-<summary>**Code Solution**</summary>
+<summary><b>Code Solution</b></summary>
 
 ```jsx
 // src/components/AddDataset/AddDataset.js
