@@ -90,7 +90,7 @@ test( "chart does not mutate state on ADD_DATASET actions", () => {
 
 test( "chart handles CREATE_CHART actions", () => {
 	expect( chart( { activeChartIndex: 2, charts: [] }, createChart( [ "Foo", "Bar", "Baz" ], "Foochart" ) ) ).toEqual( {
-		  activeChartIndex: 0
+		  activeChartIndex: 2
 		, charts: [ {
 			  labels: [ "Foo", "Bar", "Baz" ]
 			, name: "Foochart"

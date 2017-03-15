@@ -29,12 +29,11 @@ test( "AddDataset displays a different number of inputs based on props.labels.le
 			labels={ [ "Foo", "Bar", "Baz" ] }
 		/>
 	);
-
 	expect( addDataset.find( ".add-dataset__input" ).length ).toBe( 4 );
 } );
 
 test( "AddDataset sets state.data based on props.labels.length", () => {
-	const addDataset = shallow(
+	let addDataset = shallow(
 		<AddDataset
 			addDataset={ () => null }
 			labels={ [ "Foo", "Bar", "Baz" ] }
@@ -43,7 +42,12 @@ test( "AddDataset sets state.data based on props.labels.length", () => {
 
 	expect( addDataset.state().data ).toEqual( [ 0, 0, 0 ] );
 
-	addDataset.setProps( { labels: [ "Foo", "Bar", "Baz", "Qux" ] } );
+	addDataset = shallow(
+		<AddDataset
+		  addDataset={ () => null }
+			labels={ ["Foo", "Bar", "Baz", "Que"]}
+		/>
+	)
 
 	expect( addDataset.state().data ).toEqual( [ 0, 0, 0, 0 ] );
 } );
