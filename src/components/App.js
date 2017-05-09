@@ -4,6 +4,7 @@ import "./App.css";
 
 import NewChart from "./NewChart/NewChart";
 import Sidebar from "./Sidebar/Sidebar";
+import AddDataset from "./AddDataset/AddDataset";
 
 class App extends Component {
 	render() {
@@ -18,6 +19,9 @@ class App extends Component {
 							<NewChart />
 						</div>
 					</header>
+          <div className="app__active-chart">
+            
+          </div>
 				</main>
 			</div>
 		);
