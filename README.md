@@ -1,167 +1,250 @@
 <img src="https://devmounta.in/img/logowhiteblue.png" width="250" align="right">
 
-# Categorizer
-<img src="https://raw.githubusercontent.com/DevMountain/categorizer/master/readme_assets/completed.png" />
+# Project Summary
 
-### Project Summary
+During this project we'll be building a web application that allows for categorizing information in radar charts. We'll build out two main components to make our web application work. The component that allows for making new charts and the component that displays a list of the created charts and allows us to navigate between charts. The component for adding `datasets` to charts will already be built out for us. However, we will create the reducer code that the component will use. The radar chart will also already be setup for us. We'll just need to pass the correct data to its component. To keep track of data and pass it to the correct components we'll make heavy use of Redux and React Redux.
 
-During this project we'll be building a web application that allows for easily categorizing information in radar charts. Users will be able to keep track of multiple categories, each category having multiple data sets. To keep track of this data and pass it to the correct components we'll make heavy use of Redux and React Redux.
-
-This diagram can serve as a useful reference point on how data is flowing in the application if you ever get a little lost.
+The following diagram can serve as a useful reference point on how data is flowing in the application if you ever get a little lost.
 <img src="https://raw.githubusercontent.com/DevMountain/categorizer/solution/readme_assets/categorizer-redux-flow.png" />
 
-**A finished example can be found [here](https://devmountain.github.io/categorizer/)**
+**A live example can be found [here](https://devmountain.github.io/categorizer/)**
 
+<img src="https://raw.githubusercontent.com/DevMountain/categorizer/master/readme_assets/completed.png" />
 
-### Setup
+## Setup
 
-Get started with the usual steps: 
+* `Fork` and `clone` this repository.
+* `cd` into the project directory.
+* Run `npm install` to download the included dependencies.
+* In one terminal window/tab run `npm test` to start the test suite.
+* In another terminal window/tab run `npm start` to spin up the development server.
 
-* Fork and clone this repository
-* `cd` into the project directory
-* `npm i` to download the included dependencies
-* `npm test` to start the test suite
-* `npm start` to spin up the development server
+## Step 1
 
-### Step 1
+### Summary
 
-**Summary**
+In this step we'll download the necessary packages to use Redux and create a reducer for our charts.
 
-The first step will be focused on the initial setup required to make a Redux application. We will install the required dependencies, create a reducer and Redux store, and connect the application to Redux.
+### Instructions
 
-**Instructions**
+* Install Redux and React Redux using npm.
+* Create a `chart.js` file in `src/ducks/`.
+* Create an initial state object at the top of `chart.js` called `initialState` with the following properties:
+  * `activeChartIndex` - The index of the active chart. This should default to value of `0`.
+  * `charts` - The array of charts. Each chart will be an object. This array should default to having one chart.
+    * <details> 
 
-* Install Redux and React Redux
-* Create `src/ducks/chart.js`
-* Write an initial state and reducer inside of `src/ducks/chart.js`
-* Create `src/store.js`
-* Create the Redux store in `src/store.js`
-* Connect the application to Redux in `src/index.js`
-* Connect the `App` component definition to Redux
+      <summary> <code> Default Chart Code </code> </summary>
 
-**Detailed Instructions**
+      ```js
+      {
+        labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ], 
+        name: "Example Chart", 
+        datasets: [
+          {
+            label: "My First dataset", 
+            data: [65, 59, 90, 81, 56, 55, 40]
+          },
+          {
+            label: "My Second dataset",
+            data: [28, 48, 40, 19, 96, 27, 100]
+          }
+        ]
+      }
+      ```
 
-Start by installing the following dependencies
-
-* [`redux`](http://redux.js.org/) - A state container for JavaScript applications. This library allows us to easily store and access information  from across an entire application.
-* [`react-redux`](https://github.com/reactjs/react-redux) - The official bindings to seamlessly connect a React application to Redux.
-
-As those install, open the directory inside of `src` named `ducks`. This is the directory where our reducer will live. Inside of `src/ducks` create a file `chart.js`. `chart.js` will hold a reducer, action types, action creators, and the reducer's initial state.
-
-Open up `src/ducks/chart.js` and start by creating an `initialState` variable. `initialState` should be an object with two properties:
-
-* `activeChartIndex` - This is where we will store the index of the chart that the user has chosen to display. It should default to `0`
-* `charts` - This will be an array of objects containing the data necessary to create the charts. We'll have it default to an array containing an example chart object that looks like this:
-
-```javascript
-{
-  // Labels corresponding to the corners of the chart.
-  labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ]
-  // The name of the chart
-, name: "Example Chart"
-  // The data required for rendering values to the chart
-, datasets: [
-		{
-			  // The name of the dataset
-			  label: "My First dataset"
-			  // Each of these numbers corresponds to one of the labels above,
-			  // based on index
-			, data: [65, 59, 90, 81, 56, 55, 40]
-		}
-		, {
-			  label: "My Second dataset"
-			, data: [28, 48, 40, 19, 96, 27, 100]
-		}
-	]
-}
-```
-
-Once the `initialState` is created we can create our reducer. Create and export by default a function named `chart` which takes two parameters
-
-* `state` - This will be an object representation of our application's current state. It should default to `initialState`.
-* `action` - An object containing information about what has occurred, and any data necessary to perform a state change.
-
-Add a `switch` statement to the `chart` function that checks `action.type`. Later it will check for specific types, but for now just give it a `default` case that returns `state`.
-
-Now that the bones of the reducer are in place, we can create the application's Redux store. Create a new file in `src` named `store.js`. Inside of `src/store.js` import `createStore` from Redux and `chart` from `src/chart.js`. Create the Redux store by invoking `createStore` and passing in `chart`, export the store by default.
-
-What is Redux doing behind the scenes here? When Redux first initializes it will call the `chart` reducer function passing `undefined` as the first argument and a dummy action as the second argument. Our function will return the default state value of `initialState`, giving Redux an initial value to work with.
-
-Now to connect the React application to Redux. In `src/index.js` import `Provider` from React Redux and `store` from `src/store.js`. Wrap the `App` component in the `Provider` component, passing `store` as a prop to `Provider`.  `Provider` is simply a wrapper component that gives the rest of the application access to the `store`.
-
-Finally, in `src/components/App.js` import `connect` from React Redux. Underneath the component definition create a function named ``mapStateToProps` that takes a single parameter `state`. This function is how we tell Redux which pieces of state a component is interested in as well as the format they are passed in. We want all of the state data, but we also want to make life a little easier on ourselves, so `mapStateToProps` will return an object with two properties:
-
-* `activeChart` - Set equal to `charts[ state.activeChartIndex ]`
-* `charts` - Set equal to `state.charts`
-
-Note that we aren't simply returning `{ activeChartIndex: state.activeChartIndex, charts: state.charts }`, instead we are grabbing a reference to the actual active chart itself. Now we can access it easily throughout our components!
-
-To finish connecting the `App` component definition we need to create a decorator by invoking `connect` and passing in `mapStateToProps`, then invoke the decorator passing in `App`. Export the decorated component by default. Decorators take some getting used to, so here's a reminder:
+      </details>
+* Create a reducer function underneath the `initialState` called `chart`:
+  * This function should be exported by default.
+  * This function should have two parameters:
+    * `state` - The current state of the application. This should default to `initialState`.
+    * `action` - An object containing information about what has occurred and any data necessary to perform a state change.
+  * This function should use a `switch` statement on the `action.type`:
+    * Add a default case that returns `state`.
 
 <details>
 
-<summary>Decorator Example</summary>
+<summary> Detailed Instructions </summary>
 
-```javascript
-function mapStateToProps( state ) {
-    return state;
+<br />
+
+Let's begin by installing the following dependencies we'll need in order to use Redux with our react application. Open up a third terminal window/tab and make sure you are still in the root directory of the project and then run `npm install redux react-redux`.
+
+While the install is happening open the `ducks` folder ( `src/ducks` ) and create a file called `chart.js`. This is where we'll create our reducer, action types, action creators, and the initial state for our reducer. 
+
+Now let's open `src/ducks/chart.js` and start by creating an `initialState` variable. `initialState` should be an object with two properties: `activeChartIndex` and `charts`.
+
+* `activeChartIndex` - This is where we will store the index of the chart that the user has chosen to display.
+* `charts` - This will be an array of objects containing the data necessary to create the charts. 
+
+Let's set the value of `activeChartIndex` to `0` so it will display the first chart and let's default `charts` to an array. We'll also add a default chart to the `charts` array.
+The `charts` array will contain an array of chart objects that will keep track of the following information:
+
+* `labels` (array of strings): The labels that will appear at the corners of the chart.
+* `name` (string): The name of the chart.
+* `datasets` (array of objects): Data required for rendering values on to the chart
+
+Our default chart will be the following object:
+
+<details>
+
+<summary> <code> Default Chart Object </code> </summary>
+
+```js
+{
+  labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ], 
+  name: "Example Chart", 
+  datasets: [
+    {
+      label: "My First dataset", 
+      data: [65, 59, 90, 81, 56, 55, 40]
+    },
+    {
+      label: "My Second dataset",
+      data: [28, 48, 40, 19, 96, 27, 100]
+    }
+  ]
 }
-const decorator = connect( mapStateToProps );
-const decoratedComponent = decorator( App );
-export default decoratedComponent;
 ```
-
-This is usually shortened to
-
-```javascript
-function mapStateToProps( state ) {
-    return state;
-}
-export default connect( mapStateToProps )( App );
-```
-
-___
 
 </details>
 
-That's it for step 1! Nothing appears to have changed, but we've laid the groundwork we'll build on over the next steps!
+<br />
 
-<details>
+A dataset object in the `datasets` array will have two properties: `label` and `data`. The `label` is a string value for the name of the dataset and the `data` array contains the integer values for the labels of the chart. Let's take a look at the first dataset object:
 
-<summary><b>Code Solution</b></summary>
+```js
+{
+  label: "My first dataset",
+  data: [65, 59, 90, 81, 56, 55, 40]
+} 
+```
 
-<details>
+Since the default chart has the labels: "Red", "Blue", "Yellow", "Green", "Purple", "Orange". The value for "Red" is 65, the value for "Blue" is 59, and so on till the the value for "Orange" is 40. This relationship is made through the index of the arrays.
 
-<summary><code>src/ducks/chart.js</code></summary>
+Your `chart.js` should now look like:
 
-```javascript
+```js
 const initialState = {
-	  activeChartIndex: 0
-	, charts: [ {
-		  labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ]
-		, name: "Example Chart"
-		, datasets: [
-			{
-				  label: "My First dataset"
-				, data: [65, 59, 90, 81, 56, 55, 40]
-			}
-			, {
-				  label: "My Second dataset"
-				, data: [28, 48, 40, 19, 96, 27, 100]
-			}
-		]
-	} ]
+  activeChartIndex: 0,
+  charts: [
+    {
+      labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ], 
+      name: "Example Chart", 
+      datasets: [
+        {
+          label: "My First dataset", 
+          data: [65, 59, 90, 81, 56, 55, 40]
+        },
+        {
+          label: "My Second dataset",
+          data: [28, 48, 40, 19, 96, 27, 100]
+        }
+      ]
+    }
+  ]
+};
+```
+
+Let's move on to the next part of this step and create our reducer under the `initialState` variable. Create and export by default a function named `chart` which takes two parameters: `state` and `action`.
+
+* `state` - This will be an object representation of our application's current state.
+  * It should default to `initialState`.
+* `action` - An object containing information about what has occurred and any data necessary to perform a state change.
+
+```js
+export default function chart( state = initialState, action ) {
+
+}
+```
+
+In `ES2015` we can set default parameters by using an `=` sign in the function's head. `state = initialState` means that whenever `chart` gets called and `state` is not defined, it will use the value of `initialState` instead.
+
+Now that our reducer function is created let's add a `switch` statement to the `chart` function that checks `action.type`. Later it will check for specific types but for now just give it a `default` case that returns `state`.
+
+```js
+export default function chart( state = initialState, action ) {
+  switch(action.type) {
+    default:
+      return state;
+  }
+}
+```
+
+</details>
+
+### Solution
+
+<details>
+
+<summary> <code> src/ducks/chart.js </code> </summary>
+
+```js
+const initialState = {
+  activeChartIndex: 0,
+  charts: [
+    {
+      labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ], 
+      name: "Example Chart", 
+      datasets: [
+        {
+          label: "My First dataset", 
+          data: [65, 59, 90, 81, 56, 55, 40]
+        },
+        {
+          label: "My Second dataset",
+          data: [28, 48, 40, 19, 96, 27, 100]
+        }
+      ]
+    }
+  ]
 };
 
 export default function chart( state = initialState, action ) {
-	switch ( action.type ) {
-		default: return state;
-	}
+  switch(action.type) {
+    default:
+      return state;
+  }
 }
-
 ```
 
 </details>
+
+## Step 2
+
+### Summary
+
+In this step we'll create a store that will use the reducer we made in the previous step.
+
+### Instructions
+
+* Create a `store.js` file in `src/`.
+* Create a Redux store inside of the `store.js` file you just created:
+  * Import `createStore` from `'redux'`.
+  * Import `chart` from the reducer we made in the previous step ( `./ducks/chart.js` ).
+  * Call the `createStore` function with `chart` as the first parameter.
+    * This function call should be exported by default.
+
+<details>
+
+<summary> Detailed Instructions </summary>
+
+<br />
+
+Let's begin by creating a new file in `src` named `store.js`. Inside of `src/store.js` we'll want to import `createStore` from `redux` and `chart` from `src/chart.js`. Then we can use `createStore` by invoking it and passing in our chart reducer. We'll also want to export this by default.
+
+```js
+import { createStore } from 'redux';
+import chart from './ducks/chart';
+
+export default createStore(chart);
+```
+
+Basically Redux is creating the store and calling our reducer `chart` with `undefined` and a dummy action as arguments. This will then cause our reducer to return the `initialState` variable and give our store an initial state.
+
+</details>
+
+### Solution
 
 <details>
 
@@ -169,13 +252,55 @@ export default function chart( state = initialState, action ) {
 
 ```javascript
 import { createStore } from "redux";
-
 import chart from "./ducks/chart";
 
 export default createStore( chart );
 ```
 
 </details>
+
+## Step 3
+
+### Summary
+
+In this step we'll connect Redux to our application in `index.js`.
+
+### Instructions
+
+* Open `src/index.js`.
+* Import `Provider` from `react-redux` after the `import` for `ReactDOM`
+* Import `store` from `src/store.js` after the `import` for `./index.css`.
+* In `ReactDOM.render()`:
+  * Wrap the `<App />` component in a `Provider` component.
+  * Add a `store` prop to the `Provider` component that equals `store`.
+
+<details>
+
+<summary> Detailed Instructions </summary>
+
+<br />
+
+Let's being by opening `src/index.js` and importing `Provider` from `react-redux` and `store` from `src/store.js`.
+
+```js
+import { Provider } from 'react-redux';
+import store from './store.js';
+```
+
+Now that we have our `store` and `Provider` component let's wrap the `App` component with the `Provider` component. We'll also need to add a `store` prop to `Provider`. The `store` prop should equal the `store` we imported earlier. This will give our application access to the Redux store.
+
+```js
+ReactDOM.render(
+  <Provider store={ store }>
+    <App />
+  </Provider>,
+  document.getElementById( 'root' )
+);
+```
+
+</details>
+
+### Solution
 
 <details>
 
@@ -193,19 +318,115 @@ import store from "./store";
 import App from "./components/App";
 
 ReactDOM.render(
-	<Provider store={ store }>
-		<App />
-	</Provider>,
-	document.getElementById( 'root' )
+  <Provider store={ store }>
+    <App />
+  </Provider>,
+  document.getElementById( 'root' )
 );
 
 ```
 
 </details>
 
+## Step 4
+
+### Summary
+
+In this step we will connect the `App` component definition to Redux.
+
+### Instructions
+
+* Open `src/components/App.js`.
+* Import `connect` from `react-redux` above the `import` for `./App.css`.
+* Create a `mapStateToProps` function above the `export` statement of `App`.
+  * This function should use object destructuring on the first parameter:
+    * The first parameter will always be a state object which will always have two properties. `activeChartIndex` and `charts`.
+  * This function should return an object with the following properties:
+    * `activeChart` - Should equal the actual object of the active chart.
+    * `charts` - Should equal the entire array of charts.
+* Modify the original `export` of `App` to export it's decorated version:
+  * Invoke `connect` and pass in `mapStateToProps` as the first parameter.
+  * Invoke the function it returns with `App` as the first parameter.
+
 <details>
 
-<summary><code>App.js</code></summary>
+<summary> Detailed Instructions </summary>
+
+<br />
+
+Let's being by opening `src/components/App.js`. At the top of the file, just above the import for `./App.css`, let's import `connect` from `react-redux`. We'll use this later to connect our `App` component. Now let's create a `mapStateToProps` function above our `export` statement for `App`. This function should destructure the first parameter. The first parameter will always be a `state` object that will always have the following two properties: `activeChartIndex` and `charts`. Therefore we can destructure it by doing `{ activeChartIndex, charts }`. 
+
+```js
+function mapStateToProps( { activeChartIndex, charts } ) {
+
+}
+```
+
+<details>
+
+<summary> Object Destructuring </summary>
+
+<br />
+
+Using `ES2015` we can destructure the object that gets passed into `mapStateToProps` by using `{ activeChartIndex, charts }`. This takes the object that would get passed in as the first parameter and turns its props into variables we can reference in the function. This is the same thing as doing:
+
+```js
+// state = { activeChartIndex: 0, charts: [] }
+function mapStateToProps( state ) {
+  return {
+    activeChart: state.charts[ state.activeChartIndex ],
+    charts: state.charts
+  }
+}
+```
+
+</details>
+
+<br />
+
+This function will be used to tell Redux which pieces of state our `App` component is interested in and also format state before reaching `App`. Let's have our `mapStateToProps` return an object with a `activeChart` and `charts` property.
+
+* `activeChart` - This should equal the actual object of the chart, we can do this by using our `activeChartIndex` with our `charts` array.
+* `charts` - This should equal the array of charts.
+
+```js
+function mapStateToProps( { activeChartIndex, charts } ) {
+  return {
+    activeChart: charts[ activeChartIndex ],
+    charts: charts
+  };
+}
+```
+
+To finish connecting the `App` component definition we need to create a decorator by invoking `connect` and passing in `mapStateToProps`. This will return a function we need to then invoke and pass in our `App` component. Finally we'll then want to modify our `export` statement to equal the `decoratedComponent` instead of `App`. 
+
+Decorators can be created one of two ways:
+
+```js
+function mapStateToProps( state ) {
+  return state;
+}
+const decorator = connect( mapStateToProps );
+const decoratedComponent = decorator( App );
+export default decoratedComponent;
+```
+
+```js
+function mapStateToProps( state ) {
+  return state;
+}
+export default connect( mapStateToProps )( App );
+```
+
+Either way accomplishes the same thing, but in the solutions to come I'll be using the shorter version.
+
+</details>
+
+### Solution
+
+<details>
+
+<summary> <code> src/components/App.js </code> </summary>
 
 ```jsx
 import React, { Component } from "react";
@@ -215,98 +436,72 @@ import "./App.css";
 
 import NewChart from "./NewChart/NewChart";
 import Sidebar from "./Sidebar/Sidebar";
+import AddDataset from "./AddDataset/AddDataset";
 
 class App extends Component {
-	render() {
-		return (
-			<div className="app">
-				<Sidebar />
-				<main className="app__main">
-					<header className="app__header">
-						<h1 className="app__title">Categorizer</h1>
+  render() {
+    return (
+      <div className="app">
+        <Sidebar />
+        <main className="app__main">
+          <header className="app__header">
+            <h1 className="app__title">Categorizer</h1>
 
-						<div className="app__new-chart">
-							<NewChart />
-						</div>
-					</header>
-				</main>
-			</div>
-		);
-	}
+            <div className="app__new-chart">
+              <NewChart />
+            </div>
+          </header>
+        </main>
+      </div>
+    );
+  }
+}
+
+function mapStateToProps( { activeChartIndex, charts } ) {
+  return {
+    activeChart: charts[ activeChartIndex ],
+    charts
+  };
 }
 
 export default connect(mapStateToProps)(App);
-
-function mapStateToProps( { activeChartIndex, charts } ) {
-	return {
-		  activeChart: charts[ activeChartIndex ]
-		, charts
-	};
-}
 ```
 
 </details>
 
-</details>
+## Step 5
 
-### Step 2
+### Summary 
 
-**Summary**
+In this step we are going to dive deeper into the flow of data to remove any layers of abstraction that might have appeared. If you feel confident in the flow of data up to this point, feel free to skip this step.
 
-In this step we will be connecting a component to Redux, creating our first action type/creator, and modifying the reducer to be able to handle the action.
+<details>
 
-**Instructions**
+<summary> Visualization </summary>
 
-* Create a `CREATE_CHART` action type and corresponding action creator
-* Modify the `chart` reducer to handle to handle adding a new chart
+<br />
 
-**Detailed Instructions**
+So far we've create a reducer and a store and then hooked it up to our `App`. But what exactly is the order of events in these files we've created? The first event in this chain is in our `index.js`. When we `import` `store` it goes into `store.js` and then `store.js` imports `chart.js` which causes our `initialState` variable to be created. After that `store.js` then invokes `createStore(chart)` which calls our reducer in `chart.js`. It calls our reducer with `undefined` for the state parameter and an object with a type property equal to `"@@redux/INIT"` for the action parameter. 
 
-This step will be in `src/ducks/chart.js`. At the top of the file create an action type `CREATE_CHART` and set it equal to `"CREATE_CHART"`. This action type is just a description of what happened used by the reducer to determine how to change state.
+Since `state` was equal to undefined our default parameter sets `state` equal to our `initialState` variable in `chart.js`. Then our switch statement fires for `action.type` and returns `state` because of the `default` case. 
 
-Underneath the `chart` reducer, create and export a function named `createChart`. `createChart` will take in two parameters:
+We then go back to `index.js` which then `imports` `App.js`. This causes the export default for `App` to fire which calls our `mapStateToProps` function above the `export`. `mapStateToProps` is called with our initial state as an object:
 
-* `labels` - An array of labels that the chart will have
-* `name` - The name of the chart specified by the user
-
-`createChart` should return an object with two properties:
-
-* `chart` - An object containing the necessary chart data: `{ labels, name, datasets: [] }`
-* `type` - The action type, in this case `CREATE_CHART`
-
-With the action creator ready to go, we now need to update the reducer function itself to handle the action. Add a new `case` to the `switch` statement that checks the `action.type` against `CREATE_CHART` (put this above the default case, or it will never run!). This case should return a new state object where
-
-* `charts` is an array of `action.chart` and all the past `charts` on state
-* `activeChartIndex` is set to `0`, the index of the newly created chart.
-
-Remember not to mutate state! You should be returning a brand new object based on the values from the previous object.
-
-We'll hook this action up to the GUI in the next step, but for now you can test your reducer by calling it manually and examining the result. `chart( undefined, createChart( [ "foo", "bar", "baz" ], "test" ) );` should return something like this:
-
-```javascript
+```js
 {
-  "activeChartIndex": 0,
-  "charts": [
+  activeChartIndex: 0,
+  charts: [
     {
-      "labels": [
-        "foo",
-        "bar",
-        "baz"
-      ],
-      "name": "test",
-      "datasets": []
-    },
-    {
-      "labels": [ /* labels */ ],
-      "name": "Example Chart",
-      "datasets": [
+      labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ], 
+      name: "Example Chart", 
+      datasets: [
         {
-          "label": "My First dataset",
-          "data": [ /* numbers */ ]
+          label: "My First dataset", 
+          data: [65, 59, 90, 81, 56, 55, 40]
         },
         {
-          "label": "My Second dataset",
-          "data": [ /* numbers */ ]
+          label: "My Second dataset",
+          data: [28, 48, 40, 19, 96, 27, 100]
         }
       ]
     }
@@ -314,184 +509,266 @@ We'll hook this action up to the GUI in the next step, but for now you can test 
 }
 ```
 
+`mapStateToProps` then modifies this object and returns a new object. This new object then becomes the `props` for the `App` component. Be aware that there are other events happening in between these events, mostly by Redux, but at a high-level this is the chain of events for the files we created.
+
+In the following giphy take note of which file the debugger is currently in:
+
+<img src="https://github.com/DevMountain/categorizer/blob/solution/readme_assets/1-1g.gif" />
+
+</details>
+
+## Step 6
+
+### Summary
+
+In this step we will be creating our first action type and action creator for creating new charts. We'll then update our reducer to handle our first action by returning a brand new state object. 
+
+### Instructions
+
+* Open `src/ducks/chart.js`.
+* Create a `CREATE_CHART` action type at the top of the file that equals "CREATE_CHART".
+* Create a `createChart` action creator underneath the `chart` reducer:
+  * This function should take two parameters:
+    * `labels` - An array of labels that the chart will have.
+    * `name` - A string that equals the name of the chart.
+  * This function should return an object with two properties:
+    * `chart` - An object containing the necessary chart data. 
+      * Hint: `{ lables: [], name: string, datasets: [] }`
+      * Since we do not get any `datasets` from this action, default it to an empty array.
+    * `type` - A string that equals the action type, in this case `CREATE_CHART`.
+  * Export this action creator function.
+* Modify the `chart` reducer to handle adding a new chart:
+  * Add a `case` to the `switch` statement, above the default case, for `CREATE_CHART`.
+  * Create and return a <b>new</b> state object with the following properties:
+    * `activeChartIndex` - Should equal 0 because we add new `charts` to the beginning of the `charts` array.
+    * `charts` - Should equal an array with the new chart in front and all the old charts after it.
+    * <b>Remember to not mutate old state</b>
+
 <details>
 
-<summary><b>Code Solution</b></summary>
+<summary> Detailed Instructions </summary>
 
-```javascript
-// src/ducks/chart.js
+<br />
+
+Let's begin by opening `src/ducks/chart.js`. At the top of the file create a variable called `CREATE_CHART` and set it equal to `"CREATE_CHART"`. This variable will be our action type. You can think of action types as descriptions of what happened. The action types get used by our reducer to determine how to change state.
+
+```js
 const CREATE_CHART = "CREATE_CHART";
+```
 
-const initialState = {
-	  activeChartIndex: 0
-	, charts: [ {
-		  labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ]
-		, name: "Example Chart"
-		, datasets: [
-			{
-				  label: "My First dataset"
-				, data: [65, 59, 90, 81, 56, 55, 40]
-			}
-			, {
-				  label: "My Second dataset"
-				, data: [28, 48, 40, 19, 96, 27, 100]
-			}
-		]
-	} ]
-};
+Now let's create our action creator underneath the `chart` reducer. Create and export a function named `createChart` with two parameters: 
 
-export default function chart( state = initialState, action ) {
-	switch ( action.type ) {
-		case CREATE_CHART:
-			return {
-				  activeChartIndex: 0
-				, charts: [ action.chart, ...state.charts ]
-			};
-		default: return state;
-	}
+* `labels` - An array of labels that the chart will have
+* `name` - A string that equals the name of the chart
+
+This function should return an object with two properties:
+
+* `chart` - An object containing the necessary chart data
+* `type` - The action type, in this case `CREATE_CHART`
+
+We can determine what the necessary chart data is by looking at our `initialState` object and the first object in the `charts` array. ( `labels: [], name: string, datasets: []` ) 
+
+```js
+export function createChart(labels, name) {
+  return {
+    chart: { labels, name, datasets: [] },
+    type: CREATE_CHART
+  }
 }
+```
 
-export function createChart( labels, name ) {
-	return {
-		  chart: { labels, name, datasets: [] }
-		, type: CREATE_CHART
-	}
+<details>
+
+<summary> Shorthand Notation </summary>
+
+<br />
+
+In `ES2015` you can use shorthand notations for assigning properties on an object. The above solution is the same thing as doing:
+
+```js
+return {
+  chart: { labels: labels, name: name, datasets: [] },
+  type: CREATE_CHART
 }
-
 ```
 
 </details>
 
-### Step 3
+<br />
 
-**Summary**
+With the action creator ready to go, we now need to update the reducer function itself to handle the action. Add a new `case` to the `switch` statement, above the default case, that checks for `CREATE_CHART`. This case should return a new state object where our new `chart` is at the beginning of the `charts` array and has all of the previous state's charts after it. `activeChartIndex` should still be set to `0` since our new chart gets added to the beginning of the `charts` array.
 
-In this step we'll implement the ability to create charts in the `NewChart` component.
+Remember not to mutate state! You should be returning a brand new object based on the values from the previous state object.
 
-**Instructions**
+```js
+export default function chart( state = initialState, action ) {
+  switch(action.type) {
+    case CREATE_CHART:
+      return {
+        activeChartIndex: 0,
+        charts: [ action.chart, ...state.charts ]
+      };
+    default:
+      return state;
+  }
+}
+```
 
-* Import and connect the `createChart` action creator in `App`
-* Pass the `createChart` to the `NewChart` component
-* Alter the `NewChart` component definition to allow for handling user input
-* Use the `createChart` function to pass the user input to Redux
+We'll see this action work live in our application at the end of the next step.
 
-**Detailed Instructions**
+</details>
 
-We'll begin this step in `src/components/App.js`. Import `createChart` from `src/ducks/chart.js`. If we were to invoke `createChart` in our component right now, what would happen? Would Redux receive the action?
+### Solution
 
-It wouldn't! `createChart` is just a function that returns an action object. To send the action to Redux we need to wrap it in Redux's [`dispatch`](http://redux.js.org/docs/api/Store.html#dispatch) function. Luckily React Redux's `connect` can do just that for us. As the second argument to `connect` (after `mapStateToProps`) pass an object containing the `createChart` function.
+<details>
+
+<summary> <code> src/ducks/chart.js </code> </summary>
+
+```js
+const CREATE_CHART = "CREATE_CHART";
+
+const initialState = {
+  activeChartIndex: 0,
+  charts: [
+    {
+      labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ], 
+      name: "Example Chart", 
+      datasets: [
+        {
+          label: "My First dataset", 
+          data: [65, 59, 90, 81, 56, 55, 40]
+        },
+        {
+          label: "My Second dataset",
+          data: [28, 48, 40, 19, 96, 27, 100]
+        }
+      ]
+    }
+  ]
+};
+
+export default function chart( state = initialState, action ) {
+  switch(action.type) {
+    case CREATE_CHART:
+      return {
+        activeChartIndex: 0,
+        charts: [ action.chart, ...state.charts ]
+      };
+    default:
+      return state;
+  }
+}
+
+export function createChart(labels, name) {
+  return {
+    chart: { labels, name, datasets: [] },
+    type: CREATE_CHART
+  };
+}
+```
+
+</details>
+
+## Step 7
+
+### Summary
+
+In this step we'll import the `createChart` action creator into the `App` component, connect our action creator, and then pass it down as a `prop` into our `NewChart` component.
+
+### Instructions
+
+* Open `src/components/App.js`.
+* Import `createChart` from `src/ducks/chart.js` after the import for `./App.css`.
+* Connect the `createChart` action creator:
+  * Where we export our decorated `App` component add an `object` after `mapStateToProps` as a second parameter.
+  * Inside this new `object` add `createChart`.
+* Deconstruct `props` at the top of the `render` method.
+  * Hint: `mapStateToProps` can tell you what props `App` will have.
+  * Hint: Action creators are also added to props since we created a second parameter for `connect`.
+* Locate where we `render` `NewChart` in the `render` method of `App`:
+  * Add a `prop` to `NewChart` called `createChart` and set it equal to `createChart` from `App`'s props.
+
+<details>
+
+<summary> Detailed Instructions </summary>
+
+<br />
+
+Let's begin by opening `src/components/App.js`. At the top of the file, just after the import of `./App.cs`, import the `createChart` action creator from our `chart` reducer.
+
+```js
+import { createChart } from '../ducks/chart';
+```
+
+Now that `App.js` has access to our action creator we need a way for our `App` component to dispatch this action to our reducer. We can do this by adding an object after `mapStateToProps` where we export our decorated component.
+
+```js
+export default connect(mapStateToProps, { createChart })(App);
+```
+
+Basically this is allowing us to directly call `this.props.createChart` inside of our `App` component. Without doing it this way, you would have to use the `dispatch` function with the action creator as a parameter. Redux automatically adds the `dispatch` function to `props`. It would look like: `this.props.dispatch(this.props.createChart)`. 
+
+Also another thing to note is that once we create this object of action creators, `dispatch` is no longer automatically added to `props`. Any future action creators will have to be added to this object as well in order to be used in the `App` component.
 
 <details>
 
 <summary>The magic behind <code>connect</code> wrapping action creators</summary>
+
+<br />
 
 It may feel a little like magic, but the wrapping of action creators in dispatch is fairly simple! The actual source code will be different, but this is accomplishing the same thing.
 
 ```javascript
 // Take in an object of action creators, i.e { createChart }
 function wrapActionCreator( actionCreatorsObject ) {
-	// A new object that will hold the wrapped action creators
-	const wrappedActionCreators = {};
-	// Iterate over each action creator in the object
-	for ( let actionCreator in actionCreatorsObject ) {
-		// Creating a new function to capture arguments to the action creator
-		// such as "labels" and "name"
-		wrappedActionCreators[ actionCreator ] = ( ...args ) => {
-			// Create the action, passing in the captured arguments
-			const action = actionCreatorsObject[ actionCreator ]( ...args );
-			// Dispatch the action to Redux
-			dispatch( action );
-		}
-	}
-	return wrappedActionCreators;
+  // A new object that will hold the wrapped action creators
+  const wrappedActionCreators = {};
+  // Iterate over each action creator in the object
+  for ( let actionCreator in actionCreatorsObject ) {
+    // Creating a new function to capture arguments to the action creator
+    // such as "labels" and "name"
+    wrappedActionCreators[ actionCreator ] = ( ...args ) => {
+      // Create the action, passing in the captured arguments
+      const action = actionCreatorsObject[ actionCreator ]( ...args );
+      // Dispatch the action to Redux
+      dispatch( action );
+    }
+  }
+  return wrappedActionCreators;
 }
 ```
-
-___
 
 </details>
 
-All that is left to do in `App` is to pass `createChart` as a prop to the `NewChart` component.
+<br />
 
-Open up `src/components/NewChart/NewChart.js`. Get started by writing a `constructor` method (don't forget to `super( props );`!) where we'll create a `state` object with three properties:
+Now that our action creator is ready to be used let's pass it down as a `prop` to our `NewChart` component. Before we pass down our prop let's add `createChart` to our deconstruction of `props` at the top of the `render` method. This will allow us to avoid having to use `this.props.propNameHere` every time we want to refer to a prop.
 
-* `labels` - A list of the labels submitted so far. Defaults to an empty array
-* `name` - The text from the name input. Defaults to an empty string
-* `newLabel` - The text from the new label input. Defaults to an empty string
-
-Next up we'll need a `handleChange` method so we can accept user input. `handleChange` will take two arguments:
-
-* `field` - The name of the field that is changing, i.e `"name"` or `"newLabel"`
-* `event` - The DOM event triggering the change and carrying the new value
-
-All this method needs to do is update the specified field on state with the value on the event. It will look something like this: `this.setState( { [ field ]: event.target.value } );`.  Before we attach this method to the JSX, let's `bind` in the constructor. Because we have to handle changes from two different fields, we'll need to bind twice. It will look like this:
-
-```javascript
-constructor( props ) {
-	super( props );
-
-	this.state = {
-		  labels: []
-		, name: ""
-		, newLabel: ""
-	};
-
-	this.handleNameChange = this.handleChange.bind( this, "name" );
-	this.handleNewLabelChange = this.handleChange.bind( this, "newLabel" );
+```js
+render() {
+  const {
+      activeChart,
+      charts,
+      createChart
+  } = this.props;
 }
 ```
 
-Now we can dive into the JSX to make use of what we have so far! At the top of `render` destructure `labels`, `name`, and `newLabel` from `this.state`. Both `input` elements will need two new props:
+Now we can pass down our `createChart` prop where we render `NewChart`.
 
-* `value` - set equal to `name` or `newLabel` respectively
-* `onChange` - set equal to `handleNameChange` or `handleNewLabelChange` respectively
-
-Next we need to add a way for users to save their labels, we'll do that by creating a new method `addLabel`. `addLabel` will take a single `event` parameter. What this method needs to do is call `event.preventDefault()`, add `this.state.newLabel` to `this.state.labels`, and reset `this.state.newLabel` to an empty string. It will look something like this:
-
-```javascript
-addLabel( event ) {
-	// We need to prevent default because this will be attached to a form
-	// element. Without this, the browser will reload!
-	event.preventDefault();
-
-	this.setState( {
-		  labels: [ ...this.state.labels, this.state.newLabel ]
-		, newLabel: ""
-	} );
-}
+```jsx
+<NewChart createChart={ createChart } />
 ```
 
-Bind `addLabel` in the `constructor` and then pass it to the `onSubmit` prop of the form containing the "Add Label" input. To let the user see what labels they have already added add the following code inside of the `[]` brackets in the `new-chart__labels` span - `{ labels.join( ", " ) }`. With these changes you should be able to enter labels and see them populate below as you hit enter.
+This `prop` will then be used later by the `NewChart` component to dispatch an action for creating a new chart to our `chart` reducer.
 
-Finally we need to send all this data to our reducer! To do this we'll need one more method - `submitChart` which won't take any parameters. Destructure `labels` and `name` from `this.state` so we can do a little bit of form validation. If `name` is an empty string or there are less than 3 labels we will just return early. Next we need to call `this.props.createChart` (our action creator passed down from app) passing in `labels` and `name`. Lastly, reset `this.state` to its initial value. Bind `submitChart` in the `constructor` and pass it to the `onClick` handler of the submit button. It will look like this:
+</details>
 
-```javascript
-submitChart() {
-	const { labels, name } = this.state;
-
-	if ( !name || labels.length < 3 ) {
-		return;
-	}
-
-	this.props.createChart( labels, name );
-
-	this.setState( {
-		  labels: []
-		, name: ""
-		, newLabel: ""
-	} );
-}
-```
-
-You're now able to send all the data necessary for creating a chart to the reducer! Unfortunately the chart isn't visible yet, but we'll cover that in the next step.
+### Solution
 
 <details>
 
-<summary><b>Code Solution</b></summary>
-
-<details>
-
-<summary><code>src/components/App.js</code></summary>
+<summary> <code> src/components/App.js </code> </summary>
 
 ```jsx
 import React, { Component } from "react";
@@ -499,46 +776,177 @@ import { connect } from "react-redux";
 
 import "./App.css";
 
-import { createChart } from "../ducks/chart";
+import { createChart } from '../ducks/chart';
 
 import NewChart from "./NewChart/NewChart";
 import Sidebar from "./Sidebar/Sidebar";
+import AddDataset from "./AddDataset/AddDataset";
 
 class App extends Component {
-	render() {
-		const { createChart } = this.props;
-		return (
-			<div className="app">
-				<Sidebar />
-				<main className="app__main">
-					<header className="app__header">
-						<h1 className="app__title">Categorizer</h1>
+  render() {
+    const {
+      activeChart,
+      charts,
+      createChart
+    } = this.props;
+    
+    return (
+      <div className="app">
+        <Sidebar />
+        <main className="app__main">
+          <header className="app__header">
+            <h1 className="app__title">Categorizer</h1>
 
-						<div className="app__new-chart">
-							<NewChart createChart={ createChart } />
-						</div>
-					</header>
-				</main>
-			</div>
-		);
-	}
+            <div className="app__new-chart">
+              <NewChart createChart={ createChart } />
+            </div>
+          </header>
+        </main>
+      </div>
+    );
+  }
 }
 
 function mapStateToProps( { activeChartIndex, charts } ) {
-	return {
-		  activeChart: charts[ activeChartIndex ]
-		, charts
-	};
+  return {
+    activeChart: charts[ activeChartIndex ],
+    charts: charts
+  };
 }
 
-export default connect( mapStateToProps, { createChart } )( App );
+export default connect(mapStateToProps, { createChart })(App);
 ```
 
 </details>
 
+## Step 8
+
+### Summary
+
+In this step we will start making our `NewChart` component functional by creating a constructor method, state, and a `handleChange` method to handle user input.
+
+### Instructions
+
+* Open `src/components/NewChart/NewChart.js`.
+* Create a `constructor` method, just above the `render` method, that takes `props` as a parameter:
+  * This method should call super with `props` as a parameter.
+  * This method should create a state object with the following properties:
+    * `labels` - A list of the labels submitted so far. It should default to an empty array.
+    * `name` - The text from the name input. It should default to an empty string.
+    * `newLabel` - The text from the new label input. It should default to an empty string.
+* Create a `handleChange` method, just below the `constructor` method, for handling user input. It should take two parameters:
+  * `field` - The name of the field that is changing.
+  * `event` - The change event object holding the new value.
+* Bind `this` to the `handleChange` method at the bottom of the `constructor` method:
+  * Create two different variants of `handleChange`, one for `handleNameChange` and one for `handleInputChange`. Both should be equal to `this.handleChange.bind(this, "")` with the string being the property on state to update.
+    * this.handleNameChange = this.handleChange.bind(this, "name");
+    * this.handleLabelChange = this.handleChange.bind(this, "newLabel");
+* Deconstruct state at the top of the `render` method.
+* Locate the input with the className of `"new-chart__name new-chart__input"`:
+  * Create an `onChange` prop that calls `this.handleNameChange`.
+  * Create a `value` prop equal to `name`.
+* Locate the input with the className of `"new-chart__category new-chart__input"`:
+  * Create an `onChange` prop that calls `this.handleLabelChange`.
+  * Create a `value` prop equal to `newLabel`.
+
 <details>
 
-<summary><code>src/components/NewChart/NewChart.js</code></summary>
+<summary> Detailed Instructions </summary>
+
+<br />
+
+Let's begin by opening `src/components/NewChart/NewChart.js`. Just above the `render` method add a `constructor` method that takes `props` as its first parameter. Then call super with `props` as a parameter inside the `constructor` method. After calling `super` create a `state` object with three properties:
+
+* `labels` - A list of the labels submitted so far. It should default to an empty array.
+* `name` - The text from the name input. It should default to an empty string.
+* `newLabel` - The text from the new label input. It should default to an empty string.
+
+```js
+constructor( props ) {
+  super( props );
+
+  this.state = {
+    labels: [],
+    name: '',
+    newLabel: ''
+  };
+}
+```
+
+Now that our initial state is ready to go for our `NewChart` component let's create a `handleChange` method. `handleChange` will have two parameters:
+
+* `field` - The name of the field that is changing, in this case that will be `"name"` or `"newLabel"`.
+* `event` - The DOM event triggering the change and carrying the new value.
+
+All this method needs to do is update the specified field on state with the specified value.
+
+```js
+handleChange(field, event) {
+  this.setState({ [ field ]: event.target.value });
+}
+```
+
+Now that our `handleChange` method is created let's bind `this` and the field we want to change to it at the bottom of the `constructor` method. We'll want to make two different variants of `handleChange`. One for updating `name` and one for updating `label`. Let's call them `handleNameChange` and `handleLabelChange`.
+
+```javascript
+constructor( props ) {
+  super( props );
+
+  this.state = {
+    labels: [],
+    name: '',
+    newLabel: ''
+  };
+
+  this.handleNameChange = this.handleChange.bind( this, "name" );
+  this.handleLabelChange = this.handleLabelChange.bind( this, "newLabel" );
+}
+```
+
+Now let's destructure `labels`, `name`, and `newLabel` from `this.state` at the top of the `render` method so we can refer to them witout having to use `this.state`. 
+
+```js
+render() {
+  const {
+    labels,
+    name,
+    newLabel
+  } = this.state;
+}
+```
+
+We're now ready to hook up our `handleChange` method to the input fields for chart name and chart label. 
+
+Locate the `input` element with the `className` of `"new-chart__name new-chart__input"`. Let's add an `onChange` prop to it that equals `this.handleNameChange`. Since we bound `this` and the field we want to update in the constructor we are good to go. Next let's add a `value` prop on the `input` element equal to `name`. Since we deconstructed `state` we didn't have to use `this.state.name`.
+
+```jsx
+<input
+  className="new-chart__name new-chart__input"
+  type="text"
+  onChange={ this.handleNameChange }
+  value={ name }
+/>
+```
+
+Now let's repeat the same exact steps for the `input` element with the `className` of `"new-chart__category new-chart__input"`. However, change the `onChange` prop to equal `this.handleLabelChange` and change the `value` prop to equal `newLabel`.
+
+```jsx
+<input
+  className="new-chart__category new-chart__input"
+  required
+  type="text"
+  onChange={ this.handleLabelChange }
+  value={ newLabel }
+/>
+```
+
+</details>
+
+### Solution
+
+<details>
+
+<summary> <code>src/components/NewChart/NewChart.js</code> </summary>
 
 ```jsx
 import React, { Component, PropTypes } from "react";
@@ -546,158 +954,452 @@ import React, { Component, PropTypes } from "react";
 import "./NewChart.css";
 
 export default class NewChart extends Component {
-	static propTypes = { createChart: PropTypes.func.isRequired };
+  static propTypes = { createChart: PropTypes.func.isRequired };
 
-	constructor( props ) {
-		super( props );
+  constructor( props ) {
+    super( props );
 
-		this.state = {
-			  labels: []
-			, name: ""
-			, newLabel: ""
-		};
+    this.state = {
+      labels: [],
+      name: '',
+      newLabel: ''
+    };
 
-		this.handleNameChange = this.handleChange.bind( this, "name" );
-		this.handleNewLabelChange = this.handleChange.bind( this, "newLabel" );
-		this.addLabel = this.addLabel.bind( this );
-		this.submitChart = this.submitChart.bind( this );
-	}
+    this.handleNameChange = this.handleChange.bind( this, "name" );
+    this.handleLabelChange = this.handleChange.bind( this, "newLabel" );
+  }
 
-	handleChange( field, event ) {
-		this.setState( { [ field ]: event.target.value } );
-	}
+  handleChange(field, event) {
+    this.setState({ [field]: event.target.value });
+  }
 
-	addLabel( event ) {
-		event.preventDefault();
+  render() {
+    const {
+      labels,
+      name,
+      newLabel
+    } = this.state;
+    return (
+      <div className="new-chart">
+        <div className="new-chart__form-group">
+          <label className="new-chart__label">Chart Name:</label>
+          <input
+            className="new-chart__name new-chart__input"
+            type="text"
+            onChange={ this.handleNameChange }
+            value={ name }
+          />
+        </div>
+        <form className="new-chart__form-group">
+          <label className="new-chart__label">Add Label:</label>
+          <input
+            className="new-chart__category new-chart__input"
+            required
+            type="text"
+            onChange={ this.handleLabelChange }
+            value={ newLabel }
+          />
+        </form>
 
-		this.setState( {
-			  labels: [ ...this.state.labels, this.state.newLabel ]
-			, newLabel: ""
-		} );
-	}
+        <div className="new-chart__labels-wrapper">
+          <label className="new-chart__label">Labels:</label>
+          <span className="new-chart__labels">[] (Min. 3)</span>
+        </div>
 
-	submitChart() {
-		const { labels, name } = this.state;
-
-		if ( !name || labels.length < 3 ) {
-			return;
-		}
-
-		this.props.createChart( labels, name );
-
-		this.setState( {
-			  labels: []
-			, name: ""
-			, newLabel: ""
-		} );
-	}
-
-	render() {
-		const {
-			  labels
-			, name
-			, newLabel
-		} = this.state;
-		return (
-			<div className="new-chart">
-				<div className="new-chart__form-group">
-					<label className="new-chart__label">Chart Name:</label>
-					<input
-						className="new-chart__name new-chart__input"
-						onChange={ this.handleNameChange }
-						type="text"
-						value={ name }
-					/>
-				</div>
-				<form
-					className="new-chart__form-group"
-					onSubmit={ this.addLabel }
-				>
-					<label className="new-chart__label">Add Label:</label>
-					<input
-						className="new-chart__category new-chart__input"
-						onChange={ this.handleNewLabelChange }
-						required
-						type="text"
-						value={ newLabel }
-					/>
-				</form>
-
-				<div className="new-chart__labels-wrapper">
-					<label className="new-chart__label">Labels:</label>
-					<span className="new-chart__labels">[{ labels.join( ", " ) }](Min. 3)</span>
-				</div>
-
-				<button
-					className="new-chart__submit"
-					onClick={ this.submitChart }
-				>
-					Submit
-				</button>
-			</div>
-		);
-	}
+        <button className="new-chart__submit">
+          Submit
+        </button>
+      </div>
+    );
+  }
 }
-
 ```
 
 </details>
 
-</details>
+## Step 9
 
-### Step 4
+### Summary
 
-**Summary**
+In this step we will continue to make our `NewChart` component functional by handling adding new `labels`.
 
-In this step we will be rendering the chart, and updating the sidebar to list all past charts.
+### Instructions
 
-**Instructions**
-
-* Render the `ActiveChart` component into `App`
-* Pass the `activeChart` prop to the `ActiveChart` component
-* Create `SET_ACTIVE_CHART_INDEX` action type/creator
-* Connect the `setActiveChartIndex` action creator to `App`
-* Pass `charts` and `setActiveChartIndex` props to `Sidebar`
-* Refactor `Sidebar` to display a list of past charts
-
-**Detailed Instructions**
-
-After all the hard work we've done so far, it's time to finally display a chart! Start by opening up `src/components/App.js` and import `ActiveChart` from `src/components/ActiveChart/ActiveChart`. At the top of the `render` method, destructure `activeChart` and `charts` from `this.props`. Inside of the `render` method's `return`, just beneath the closing `</header>` tag, add a div with the class `app__active-chart`. Place the `ActiveChart` component into this new div and give it a `chart` prop set equal to the `activeChart` object we are getting from Redux.
-
-The example chart from initial state should now be showing up in the page! And if you create another chart, the new one will replace the example.
-
-Now that we can create and actually _see_ multiple charts (even if we can't add data to them yet) we need a way to navigate between them. We'll set up the logic for this in`src/ducks/chart.js`. At the top of the file create a new action type of `SET_ACTIVE_CHART_INDEX` set equal to `"SET_ACTIVE_CHART_INDEX"`.
-
-Underneath the reducer create a `setActiveChartIndex` action creator that takes a single parameter `index` and returns an object with a `type` property of `SET_ACTIVE_CHART_INDEX` and an `index` property set equal to the `index` parameter.
-
-Lastly we need to handle this action in the `chart` reducer, luckily this will be pretty easy. Add a `case` checking against `SET_ACTIVE_CHART_INDEX`, this `case` should return a new state object where `activeChartIndex` is set equal to `action.index` and `charts` is set equal to `state.charts`.
-
-Head back over to `src/components/App.js` and import the new `setActiveChartIndex` action creator. Add `setActiveChartIndex` as another property to the action creators object passed to `connect`. Destructure `setActiveChartIndex` in `App`'s `render` method. Pass two new props to `Sidebar` - `charts` and `setActiveChartIndex`.
-
-Open up `src/components/Sidebar/Sidebar.js`. We'll need to `map` over the charts passed to this component to create a list of charts. Above the `return` create a new variable named `pastCharts` and set it equal to the result of mapping over `charts` and returning the following JSX:
-
-```jsx
-<li
-	className="sidebar__past-chart"
-	key={ chart.name }
->
-	<p
-		className="sidebar__chart-name"
-		// Remember that .map will provide the element's index
-		// as a second parameter
-		onClick={ () => setActiveChartIndex( index ) }
-	>
-		{ chart.name }
-	</p>
-	<p className="sidebar__chart-datasets">{ chart.datasets.length } Datasets</p>
-</li>
-```
-
-Replace the static `<li>` element and its contents with the `pastCharts` variable. You should now be able to create multiple charts and navigate between them by clicking on the appropriate sidebar links.
+* Open `src/components/NewChart/NewChart.js`.
+* Create a new class method called `addLabel`, just below the `handleChange` method, that takes an `event` object as the first parameter.
+  * This method should call `event.preventDefault();` so the browser doesn't refresh.
+  * Then the method should use `setState` to update the following properties on state:
+    * `labels` - Should equal the previous list of labels from state with the new label added to the end.
+    * `newLabel` - Should then be reset back to its default value of `''`.
+* Bind `this` to `addLabel` at the bottom of the `constructor` method.
+* Add an `onSubmit` prop to the `form` element with the `className` of `"new-chart__form-group"`.
+  * It should call `this.addLabel`.
+* Change the span with the `className` of `"new-chart__labels"` to display the current labels from state inside [ ].
+  * For example, if I had the labels `green` and `red`:
+    * "[ green, red ] (Min. 3)"
 
 <details>
 
-<summary><b>Code Solution</b></summary>
+<summary> Detailed Instructions </summary>
+
+<br />
+
+Let's begin by opening `src/components/NewChart/NewChart.js`. After the `handleChange` method, let's create a new method called `addLabel`. `addLabel` will take a single `event` parameter. This method should call `event.preventDefault()`, to prevent a browser refresh, and then use `this.setState()` to update two properties on state. It should update `this.state.labels` to equal a new array of all the previous labels with the new label at the end. It should also set `newLabel` back to it's default value afterwards.
+
+```js
+addLabel(event) {
+  event.preventDefault();
+  this.setState({
+    labels: [ ...this.state.labels, this.state.newLabel ],
+    newLabel: ''
+  });
+}
+```
+
+Now that our method is built out, let's `bind` `this` to `addLabel` at the bottom of the `constructor` method. 
+
+```js
+this.addLabel = this.addLabel.bind( this );
+```
+
+Then we can assign an `onSubmit` prop to the `form` element with the `className` of `"new-chart__form-group"`. This will allow us to press the `enter` key when typing in the input field to execute our `addLabel` method. 
+
+```jsx
+<form className="new-chart__form-group" onSubmit={ this.addLabel }>
+```
+
+Now we'll need to update the `span` element with the `className` of `"new-chart__labels"` to show our labels. Inside the [ ] we can use `{ }` to call on `labels`. Let's use the array prototype `join` to join our labels by a comma and a space.
+
+```jsx
+<span className="new-chart__labels">[ { labels.join(', ') } ] (Min. 3)</span>
+```
+
+</details>
+
+### Solution
+
+<details>
+
+<summary> <code> src/components/NewChart/NewChart.js </code> </summary>
+
+```jsx
+import React, { Component, PropTypes } from "react";
+
+import "./NewChart.css";
+
+export default class NewChart extends Component {
+  static propTypes = { createChart: PropTypes.func.isRequired };
+
+  constructor( props ) {
+    super( props );
+
+    this.state = {
+      labels: [],
+      name: '',
+      newLabel: ''
+    };
+
+    this.handleNameChange = this.handleChange.bind( this, "name" );
+    this.handleLabelChange = this.handleChange.bind( this, "newLabel" );
+    this.addLabel = this.addLabel.bind( this );
+  }
+
+  handleChange(field, event) {
+    this.setState({ [field]: event.target.value });
+  }
+  
+  addLabel(event) {
+    event.preventDefault();
+    this.setState({
+      labels: [ ...this.state.labels, this.state.newLabel ],
+      newLabel: ''
+    });
+  }
+
+  render() {
+    const {
+      labels,
+      name,
+      newLabel
+    } = this.state;
+    return (
+      <div className="new-chart">
+        <div className="new-chart__form-group">
+          <label className="new-chart__label">Chart Name:</label>
+          <input
+            className="new-chart__name new-chart__input"
+            type="text"
+            onChange={ this.handleNameChange }
+            value={ name }
+          />
+        </div>
+        <form className="new-chart__form-group" onSubmit={ this.addLabel }>
+          <label className="new-chart__label">Add Label:</label>
+          <input
+            className="new-chart__category new-chart__input"
+            required
+            type="text"
+            onChange={ this.handleLabelChange }
+            value={ newLabel }
+          />
+        </form>
+
+        <div className="new-chart__labels-wrapper">
+          <label className="new-chart__label">Labels:</label>
+          <span className="new-chart__labels">[ { labels.join(', ') } ] (Min. 3)</span>
+        </div>
+
+        <button className="new-chart__submit">
+          Submit
+        </button>
+      </div>
+    );
+  }
+}
+```
+
+</details>
+
+<br />
+
+You should now be able to go into your app and try putting in labels by typing in the label `input` field and pressing enter. You should see the text underneath update every time you press enter.
+
+## Step 10
+
+### Summary
+
+In this step we will finish the functionality for our `NewChart` component by sending data to our reducer through the prop `createChart`.
+
+### Instructions
+
+* Open `src/components/NewChart/NewChart.js`.
+* Create a new class method called `submitChart` just below the `addLabel` method.
+  * This method should exit by calling `return` if `this.state.name` is falsy or there aren't at least 3 labels.
+  * Otherwise this method should call `this.props.createChart` with two arguments:
+    * The first argument should be the `labels` array from `state`.
+    * The second argument should be the `name` string from `state`.
+  * Then the method should use `this.setState` to set all `state` values back to their default values.
+* Bind `this` to `submitChart` at the bottom of the `constructor` method.
+* Add an `onClick` prop that calls `submitChart` on the element with the `className` of `"new-chart__submit"`.
+
+<details>
+
+<summary> Detailed Instructions </summary>
+
+<br />
+
+Let's begin by opening `src/components/NewChart/NewChart.js` and creating our last class method called `submitChart` just below the `addLabel` method. This method won't need any parameters. The first thing the method should do is check to see if `this.state.name` is not falsy and that `this.state.labels` has 3 or more labels. If either of these conditions aren't met our method should call `return` to exit the method early.
+
+```js
+submitChart() {
+  if ( !this.state.name || this.state.labels.length < 3 ) {
+    return;
+  }
+}
+```
+
+If both conditions are met then we should then call `this.props.createChart` with our `labels` and `name` from `state`.
+
+```js
+submitChart() {
+  if ( !this.state.name || this.state.labels.length < 3 ) {
+    return;
+  }
+
+  this.props.createChart(this.state.labels, this.state.name);
+}
+```
+
+Finally our method should reset all `state` values back to their default values using `setState`.
+
+```js
+submitChart() {
+  if ( !this.state.name || this.state.labels.length < 3 ) {
+    return;
+  }
+
+  this.props.createChart(this.state.labels, this.state.name);
+  this.setState({ 
+    labels: [],
+    name: '',
+    newLabel: ''
+  });
+}
+```
+
+Now that our method is built let's `bind` `this` to it at the bottom of the `constructor` method.
+
+```js
+this.submitChart = this.submitChart.bind( this );
+```
+
+Now all that's left is to hook up our method to our `Submit` button using an `onClick` prop. Locate the `button` element with the `className` of `"new-chart__submit"` and add an `onClick` that calls our `submitChart` method.
+
+```jsx
+<button className="new-chart__submit" onClick={ this.submitChart }>
+  Submit
+</button>
+```
+
+</details>
+
+### Solution
+
+<details>
+
+<summary> <code> src/components/NewChart/NewChart.js </code> </summary>
+
+```jsx
+import React, { Component, PropTypes } from "react";
+
+import "./NewChart.css";
+
+export default class NewChart extends Component {
+  static propTypes = { createChart: PropTypes.func.isRequired };
+
+  constructor( props ) {
+    super( props );
+
+    this.state = {
+      labels: [],
+      name: '',
+      newLabel: ''
+    };
+
+    this.handleNameChange = this.handleChange.bind( this, "name" );
+    this.handleLabelChange = this.handleChange.bind( this, "newLabel" );
+    this.addLabel = this.addLabel.bind( this );
+    this.submitChart = this.submitChart.bind( this );
+  }
+
+  handleChange(field, event) {
+    this.setState({ [field]: event.target.value });
+  }
+  
+  addLabel(event) {
+    event.preventDefault();
+    this.setState({
+      labels: [ ...this.state.labels, this.state.newLabel ],
+      newLabel: ''
+    });
+  }
+
+  submitChart() {
+    if ( !this.state.name || this.state.labels.length < 3 ) {
+      return;
+    }
+
+    this.props.createChart(this.state.labels, this.state.name);
+    this.setState({ 
+      labels: [],
+      name: '',
+      newLabel: ''
+    });
+  }
+
+  render() {
+    const {
+      labels,
+      name,
+      newLabel
+    } = this.state;
+    return (
+      <div className="new-chart">
+        <div className="new-chart__form-group">
+          <label className="new-chart__label">Chart Name:</label>
+          <input
+            className="new-chart__name new-chart__input"
+            type="text"
+            onChange={ this.handleNameChange }
+            value={ name }
+          />
+        </div>
+        <form className="new-chart__form-group" onSubmit={ this.addLabel }>
+          <label className="new-chart__label">Add Label:</label>
+          <input
+            className="new-chart__category new-chart__input"
+            required
+            type="text"
+            onChange={ this.handleLabelChange }
+            value={ newLabel }
+          />
+        </form>
+
+        <div className="new-chart__labels-wrapper">
+          <label className="new-chart__label">Labels:</label>
+          <span className="new-chart__labels">[ { labels.join(', ') } ] (Min. 3)</span>
+        </div>
+
+        <button className="new-chart__submit" onClick={ this.submitChart }>
+          Submit
+        </button>
+      </div>
+    );
+  }
+}
+```
+
+</details>
+
+## Step 11
+
+### Summary
+
+In this step we will be rendering the active chart.
+
+### Instructions
+
+* Open `src/components/App.js`.
+* Import the `ActiveChart` component underneath the `import` of the `SideBar` component.
+* Render the `ActiveChart` component in the `div` with the `className` of `"app__active-chart"`:
+  * Add a `prop` to `ActiveChart` called `chart`.
+  * `chart` should equal the `activeChart` object from `App`'s props.
+
+<details>
+
+<summary> Detailed Instructions </summary>
+
+<br />
+
+Let's begin by opening up `src/components/App.js` and importing `ActiveChart` from `src/components/ActiveChart/ActiveChart`. This will be the component that will display our active chart. 
+
+```js
+import ActiveChart from "./ActiveChart/ActiveChart";
+```
+
+Inside of the `render` method's `return` in `App.js`, just beneath the closing `</header>` tag, `render` the `ActiveChart` component in the `div` with the `className` of `"app__active-chart"`. 
+
+```jsx
+return (
+  <div className="app">
+    <Sidebar />
+    <main className="app__main">
+      <header className="app__header">
+        <h1 className="app__title">Categorizer</h1>
+
+        <div className="app__new-chart">
+          <NewChart createChart={ createChart } />
+        </div>
+      </header>
+      <div className="app__active-chart">
+        <ActiveChart />
+      </div>
+    </main>
+  </div>
+);
+```
+
+Next, let's give our `ActiveChart` component a prop called `chart` that is equal to the `activeChart` object from `App`'s props. If we take a look at our application now in the browser, we should see that it is showing our first chart from `initialState` in `chart.js`. Also if we add a new chart, we should see that new chart render for us.
+
+```jsx
+<div className="app__active-chart">
+  <ActiveChart chart={ activeChart } />
+</div>
+```
+
+</details>
+
+### Solution
 
 <details>
 
@@ -709,111 +1411,299 @@ import { connect } from "react-redux";
 
 import "./App.css";
 
-import { createChart, setActiveChartIndex } from "../ducks/chart";
+import { createChart } from '../ducks/chart';
 
-import ActiveChart from "./ActiveChart/ActiveChart";
 import NewChart from "./NewChart/NewChart";
 import Sidebar from "./Sidebar/Sidebar";
+import AddDataset from "./AddDataset/AddDataset";
+import ActiveChart from "./ActiveChart/ActiveChart";
 
 class App extends Component {
-	render() {
-		const {
-			  activeChart
-			, charts
-			, createChart
-			, setActiveChartIndex
-		} = this.props;
+  render() {
+    const {
+      activeChart,
+      charts,
+      createChart
+    } = this.props;
+    
+    return (
+      <div className="app">
+        <Sidebar />
+        <main className="app__main">
+          <header className="app__header">
+            <h1 className="app__title">Categorizer</h1>
 
-		return (
-			<div className="app">
-				<Sidebar
-					charts={ charts }
-					setActiveChartIndex={ setActiveChartIndex }
-				/>
-				<main className="app__main">
-					<header className="app__header">
-						<h1 className="app__title">Categorizer</h1>
-
-						<div className="app__new-chart">
-							<NewChart createChart={ createChart } />
-						</div>
-					</header>
-					<div className="app__active-chart">
-						<ActiveChart chart={ activeChart } />
-					</div>
-				</main>
-			</div>
-		);
-	}
+            <div className="app__new-chart">
+              <NewChart createChart={ createChart } />
+            </div>
+          </header>
+          <div className="app__active-chart">
+            <ActiveChart chart={ activeChart } />
+          </div>
+        </main>
+      </div>
+    );
+  }
 }
 
 function mapStateToProps( { activeChartIndex, charts } ) {
-	return {
-		  activeChart: charts[ activeChartIndex ]
-		, charts
-	};
+  return {
+    activeChart: charts[ activeChartIndex ],
+    charts: charts
+  };
 }
 
-export default connect( mapStateToProps, { createChart, setActiveChartIndex } )( App );
+export default connect(mapStateToProps, { createChart })(App);
 ```
 
 </details>
+
+## Step 12
+
+### Summary
+
+In this step we will update our `chart` reducer to handle an action for setting the new active chart.
+
+### Instructions
+
+* Open `src/ducks/chart.js`.
+* Create an action type called `SET_ACTIVE_CHART_INDEX` that equals `"SET_ACTIVE_CHART_INDEX"`.
+* Create and export an action creator called `setActiveChartIndex`:
+  * This function should take in one parameter:
+    * `index` - This will be an integer of the new active chart's index.
+  * This function should return an object with two properties:
+    * `index` - This should equal the passed in index.
+    * `type` - This should equal `SET_ACTIVE_CHART_INDEX`.
+* Add a case for `SET_ACTIVE_CHART_INDEX` to the `switch` statement in the `chart` reducer:
+  * This case should be above the default case.
+  * This case should return an object with two properties:
+    * `activeChartIndex` - This should equal the index given on `action`.
+    * `charts` - This should equal the charts array on `state`.
+
+<details>
+
+<summary> Detailed Instructions </summary>
+
+<br />
+
+Let's being by opening `src/ducks/chart.js`. At the top of the file create a new action type of `SET_ACTIVE_CHART_INDEX` and set it equal to `"SET_ACTIVE_CHART_INDEX"`.
+
+```js
+const SET_ACTIVE_CHART_INDEX = "SET_ACTIVE_CHART_INDEX";
+```
+
+Underneath the reducer create a `setActiveChartIndex` action creator that takes a single parameter: `index`. This action creator should return an object with two properties: `index` and `type`. `index` should equal the passed in `index` and `type` should equal `SET_ACTIVE_CHART_INDEX` ( the action type we just created ). 
+
+```js
+export function setActiveChartIndex(index) {
+  return {
+    index,
+    type: SET_ACTIVE_CHART_INDEX
+  }
+}
+```
+
+Now let's update our `chart` reducer to handle this new action. Add a `case` checking against `SET_ACTIVE_CHART_INDEX`. This `case` should return a new state object where `activeChartIndex` is set equal to `action.index` and `charts` is set equal to `state.charts`. Make sure this case appears above the `default` case.
+
+```js
+case SET_ACTIVE_CHART_INDEX:
+  return {
+    activeChartIndex: action.index,
+    charts: state.charts
+  }
+```
+
+</details>
+
+### Solution
 
 <details>
 
 <summary><code>src/ducks/chart.js</code></summary>
 
-```javascript
+```js
 const CREATE_CHART = "CREATE_CHART";
 const SET_ACTIVE_CHART_INDEX = "SET_ACTIVE_CHART_INDEX";
 
 const initialState = {
-	  activeChartIndex: 0
-	, charts: [ {
-		  labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ]
-		, name: "Example Chart"
-		, datasets: [
-			{
-				  label: "My First dataset"
-				, data: [65, 59, 90, 81, 56, 55, 40]
-			}
-			, {
-				  label: "My Second dataset"
-				, data: [28, 48, 40, 19, 96, 27, 100]
-			}
-		]
-	} ]
+  activeChartIndex: 0,
+  charts: [
+    {
+      labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ], 
+      name: "Example Chart", 
+      datasets: [
+        {
+          label: "My First dataset", 
+          data: [65, 59, 90, 81, 56, 55, 40]
+        },
+        {
+          label: "My Second dataset",
+          data: [28, 48, 40, 19, 96, 27, 100]
+        }
+      ]
+    }
+  ]
 };
 
 export default function chart( state = initialState, action ) {
-	switch ( action.type ) {
-		case CREATE_CHART:
-			return {
-				  activeChartIndex: 0
-				, charts: [ action.chart, ...state.charts ]
-			};
-		case SET_ACTIVE_CHART_INDEX:
-			return {
-				  activeChartIndex: action.index
-				, charts: state.charts
-			};
-		default: return state;
-	}
+  switch(action.type) {
+    case CREATE_CHART:
+      return {
+        activeChartIndex: 0,
+        charts: [ action.chart, ...state.charts ]
+      };
+    case SET_ACTIVE_CHART_INDEX:
+      return {
+        activeChartIndex: action.index,
+        charts: state.charts
+      }
+    default:
+      return state;
+  }
 }
 
-export function createChart( labels, name ) {
-	return {
-		  chart: { labels, name, datasets: [] }
-		, type: CREATE_CHART
-	}
+export function createChart(labels, name) {
+  return {
+    chart: { labels, name, datasets: [] },
+    type: CREATE_CHART
+  };
 }
 
-export function setActiveChartIndex( index ) {
-	return { index, type: SET_ACTIVE_CHART_INDEX };
+export function setActiveChartIndex(index) {
+  return {
+    index,
+    type: SET_ACTIVE_CHART_INDEX
+  }
 }
 ```
 
 </details>
+
+## Step 13
+
+### Summary
+
+In this step we will update our `SideBar` component to display a list of charts that have been created. This will allow us to navigate between created charts.
+
+### Instructions
+
+* Open `src/components/App.js`.
+* Add `setActiveChartIndex` to the `import` of action creators.
+* Add `setActiveChartIndex` to the action creators object in the `connect` statement.
+* Destructure `setActiveChartIndex` from `App`'s props in the `render` method.
+* Add two props where we `render` `SideBar`:
+  * `charts` - Should equal `charts` from `App`'s props.
+  * `setActiveChartIndex` - Should equal `setActiveChartIndex` from `App`'s props.
+* Open `src/components/SideBar/SideBar.js`.
+* Locate the `<ul>` element with the `className` of `"sidebar__past-charts"`:
+  * Remove the static `<li>` element that is already there and replace it with `{ }` that contains a map inside.
+  * Map over `charts` and keep track of the `chart` and `index`:
+    * Call the first parameter of the map function `chart`.
+    * Call the second parameter of the map function `index`.
+  * Have the map return the following `JSX`:
+    * <details>
+      
+      <summary> JSX </summary>
+
+      ```jsx
+      <li className="sidebar__past-chart" key={ chart.name }>
+        <p className="sidebar__chart-name" onClick={ () => setActiveChartIndex( index ) }>
+          { chart.name }
+        </p>
+
+        <p className="sidebar__chart-datasets">{ chart.datasets.length } Datasets</p>
+      </li>
+      ```
+
+      </details>
+
+<details>
+
+<summary> Detailed Instructions </summary>
+
+<br />
+
+Head back over to `src/components/App.js` and import the new `setActiveChartIndex` action creator so the `App` component can have access to it. 
+
+```js
+import { createChart, setActiveChartIndex } from '../ducks/chart';
+```
+
+Now let's add `setActiveChartIndex` as another property to the action creators object passed to `connect` so we don't have to worry about calling `dispatch` when calling our `setActiveChartIndex` action creator. 
+
+```js
+export default connect(mapStateToProps, { createChart, setActiveChartIndex })(App);
+```
+
+Now let's destructure `setActiveChartIndex` from `props` in the `render` method so we don't have to refer to it as `this.props.setActiveChartIndex`.
+
+```js
+const {
+  activeChart,
+  charts,
+  createChart,
+  setActiveChartIndex
+} = this.props;
+```
+
+We now have everything we need from our reducer and we can focus on updating our `SideBar` component. Let's create two new `props` where the `SideBar` component gets rendered. One called `charts` and another called `setActiveChartIndex`. The `charts` prop should equal `charts` from `App`'s props and `setActiveChartIndex` prop should equal `setActiveChartIndex` from `App`'s props.
+
+```jsx
+<Sidebar charts={ charts } setActiveChartIndex={ setActiveChartIndex } />
+```
+
+Let's configure our `SideBar` component to use these props. Open up `src/components/Sidebar/Sidebar.js`. We'll need to `map` over the charts passed to this component to create a list of charts. Let's remove the `<li>` element in the `<ul>` element with the `className` of `"sidebar__past-charts"`.
+
+```jsx
+export default function Sidebar( { charts, setActiveChartIndex } ) {
+  return (
+    <aside className="sidebar">
+      <h3 className="sidebar__title">Past Charts</h3>
+
+      <ul className="sidebar__past-charts">
+        
+      </ul>
+    </aside>
+  );
+}
+```
+
+Inside of the `<ul>` elment let's create our map by breaking out of JSX with `{ }`. Map over `charts` and keep track of the current `chart` and the current `index`.
+
+```jsx
+<ul className="sidebar__past-charts">
+  {
+    charts.map( ( chart, index ) => (
+
+    ))
+  }
+</ul>
+```
+
+Inside the map return the following JSX:
+
+```jsx
+<ul className="sidebar__past-charts">
+  {
+    charts.map( ( chart, index ) => (
+      <li className="sidebar__past-chart" key={ chart.name }>
+
+        <p className="sidebar__chart-name" onClick={ () => setActiveChartIndex( index ) }>
+          { chart.name }
+        </p>
+
+        <p className="sidebar__chart-datasets">{ chart.datasets.length } Datasets</p>
+      </li>
+    ))
+  }
+</ul>
+```
+
+You should now be able to click on different charts in the `SideBar` and see the active chart render in on the right.
+
+</details>
+
+### Solution
 
 <details>
 
@@ -825,183 +1715,296 @@ import React, { PropTypes } from "react";
 import "./Sidebar.css";
 
 export default function Sidebar( { charts, setActiveChartIndex } ) {
-	const pastCharts = charts.map( ( chart, index ) => (
-		<li
-			className="sidebar__past-chart"
-			key={ chart.name }
-		>
-			<p
-				className="sidebar__chart-name"
-				onClick={ () => setActiveChartIndex( index ) }
-			>
-				{ chart.name }
-			</p>
-			<p className="sidebar__chart-datasets">{ chart.datasets.length } Datasets</p>
-		</li>
-	) );
-	return (
-		<aside className="sidebar">
-			<h3 className="sidebar__title">Past Charts</h3>
+  return (
+    <aside className="sidebar">
+      <h3 className="sidebar__title">Past Charts</h3>
 
-			<ul className="sidebar__past-charts">
-				{ pastCharts }
-			</ul>
-		</aside>
-	);
+      <ul className="sidebar__past-charts">
+        {
+          charts.map( ( chart, index ) => (
+            <li className="sidebar__past-chart" key={ chart.name }>
+              <p className="sidebar__chart-name" onClick={ () => setActiveChartIndex( index ) }>
+                { chart.name }
+              </p>
+
+              <p className="sidebar__chart-datasets">{ chart.datasets.length } Datasets</p>
+            </li>
+          ))
+        }
+      </ul>
+    </aside>
+  );
 }
 
 Sidebar.propTypes = {
-	  charts: PropTypes.arrayOf( PropTypes.object ).isRequired
-	, setActiveChartIndex: PropTypes.func.isRequired
+  charts: PropTypes.arrayOf( PropTypes.object ).isRequired,
+  setActiveChartIndex: PropTypes.func.isRequired
 };
 ```
 
 </details>
 
-</details>
+## Step 14
 
-### Step 5
+### Summary
 
-**Summary**
+In this step we will update our `chart` reducer to handle an action for adding new datasets to a chart.
 
-In this step we will be creating the reducer logic that allows the adding of datasets.
+### Instructions
 
-**Instructions**
-
-* Create an `ADD_DATASET` action type and corresponding action creator
-* Alter the `chart` reducer to handle the new action type
-* Connect the `addDataset` action creator to `App`
-* Render the `AddDataset` component into `App`, passing the `addDataset` action creator as a prop
-
-**Detailed Instructions**
-
-We'll begin this step in `src/ducks/chart.js`. Create a new action type of `ADD_DATASET` at the top of the file. Underneath the reducer create and export the corresponding action creator - `addDataset`. `addDataset` will take a single parameter `dataset` and return an object with two properties
-
-* `type` set equal to `ADD_DATASET`
-* `dataset` set equal to the `dataset` parameter. This will be an array of numbers that corresponds to the labels on the chart.
-
-Lastly we need to update the reducer to handle this action. Add a `case` checking the `action.type` against `ADD_DATASET`. For this `case` we will need to return a new object where:
-
-* `activeChartIndex` is set equal to `state.activeChartIndex`
-* `charts` is is a copy of `state.charts` with the a new dataset added to the active chart
-
-It will look something like this
-```javascript
-// Note the brackets around this case. This prevents variables
-// from leeching into a different scope.
-case ADD_DATASET: {
-	// Saving ourselves some typing and clean up code by destructuring
-	// values we will be using often.
-	const { activeChartIndex, charts } = state;
-	const activeChart = charts[ activeChartIndex ];
-	return {
-		  activeChartIndex
-		, charts: [
-			  // Making a copy of all the charts before the active chart
-			  ...charts.slice( 0, activeChartIndex )
-			  // Replacing the active chart with a modified copy
-			, Object.assign(
-				  {}
-				, activeChart
-				, { datasets: [ ...activeChart.datasets, action.dataset ] }
-			)
-			  // Making a copy of all the charts after the active chart
-			, ...charts.slice( activeChartIndex + 1, charts.length )
-		]
-	}
-}
-```
-
-That's it for this reducer, now we can finish up this step in `src/components/App.js`. Import `addDataset` from `src/ducks/chart.js` and `AddDataset` from `src/components/AddDataset/AddDataset.js`. Add `addDataset` to the action creators object that is being passed to `connect` and destructure it from `this.props` in `render`.
-
-Add the `AddDataset` component into `App`'s `render` method just below `ActiveChart`, passing two props:
-
-* `addDataset` - The `addDataset` action creator
-* `labels` - Set equal to `activeChart.labels`
-
-You should now see the skeleton of the `AddDataset` component to the right of the chart. We can't do much with it, but we'll fix that in the next step!
+* Open `src/ducks/chart/js`.
+* Create an action type called `ADD_DATASET` that equals `"ADD_DATA_SET"`.
+* Create and export an action creator called `addDataset`:
+  * This function should take in one parameter:
+    * `dataset` - This will be an array of numbers that correspond to the labels on the chart.
+  * This function should return an object with two properties:
+    * `dataset` - This should equal the value of the `datasets` parameter.
+    * `type` - This should equal `ADD_DATASET`.
+* Add a case for `ADD_DATASET` to the `switch` statement in the `chart` reducer:
+  * This case should be above the default case.
+  * This case should return an object with two properties:
+    * `activeChartIndex` - This should equal the `activeChartIndex` on state.
+    * `charts` - This should equal a <b>new</b> array of charts from state:
+      * The order of charts must remain the same.
+      * The chart we are adding a dataset to must be a <b>new</b> object.
+      * The order of the datasets must remain the same. 
+      * The new dataset must be added to the end of the datasets array.
 
 <details>
 
-<summary><b>Code Solution</b></summary>
+<summary> Detailed Instructions </summary>
+
+<br />
+
+Let's begin by opening `src/ducks/chart.js`. Create a new action type of `ADD_DATASET` at the top of the file that equals `"ADD_DATASET"`. 
+
+```js
+const ADD_DATASET = "ADD_DATASET";
+```
+
+Underneath the reducer create and export the corresponding action creator: `addDataset`. `addDataset` will take a single parameter `dataset` and should return an object with two properties:
+
+* `dataset` - This will be an array of numbers that corresponds to the labels on the chart. This should equal the value of the `dataset` parameter.
+* `type` - Should equal our action type: `ADD_DATASET`.
+
+```js
+export function addDataset(dataset) {
+  return {
+    dataset,
+    type: ADD_DATASET
+  }
+}
+```
+
+Lastly we need to update the reducer to handle this action. Add a `case` checking the `action.type` against `ADD_DATASET`. For this `case` we will need to return a new object where `activeChartIndex` is set equal to `state.activeChartIndex` and `charts` is is a copy of `state.charts` with the new dataset added to the active chart. 
+
+We'll need to use a local variable to accomplish this so let's wrap our `case` in `{ }` to avoiding any scoping issues. Our local variable will be called `activeChart` and it should equal the chart object of the chart that is currently active. 
+
+```js
+case ADD_DATASET: {
+  const activeChart = state.charts[ state.activeChartIndex ];
+  return {
+
+  }
+}
+```
+
+Now that we know which chart is active we can create a new object for it that has the new dataset added to it. Remember that we also want to return the `activeChartIndex` and all charts before and after the active chart.
+
+```js
+case ADD_DATASET: {
+  const activeChart = state.charts[ state.activeChartIndex ];
+  return {
+    activeChartIndex: state.activeChartIndex,
+    charts: [
+      ...state.charts.slice( 0, state.activeChartIndex ),
+      Object.assign({}, activeChart, { datasets: [ ...activeChart.datasets, action.dataset ] }),
+      ...state.charts.slice( state.activeChartIndex + 1, state.charts.length )
+    ]
+  }
+}
+```
+
+There is a lot going on here, let's break it down. We start by creating a new array for `charts`. Next we want to keep the charts in the same order so we need to put all the charts before the active chart at the beginning of the `charts` array. Using the `ES2015` spread operator we can combine it with `slice` to get all the charts up until our active chart. Then we can insert our active chart as a <b>new</b> object that has `datasets` modified to be an array of all the previous `datasets` with our new `dataset` from `action` at the end of the array. Then using the spread operator again we can get all the charts after our active chart and add it to the end of `charts` array.
+
+In addition to this we can also deconstruct state so we don't have to use `state.` every where. Our final solution would look like:
+
+```js
+case ADD_DATASET: {
+  const { activeChartIndex, charts } = state;
+  const activeChart = charts[ activeChartIndex ];
+  return {
+    activeChartIndex,
+    charts: [
+      ...charts.slice( 0, activeChartIndex ),
+      Object.assign({}, activeChart, { datasets: [ ...activeChart.datasets, action.dataset ] }),
+      ...charts.slice( activeChartIndex + 1, charts.length )
+    ]
+  }
+}
+```
+
+</details>
+
+### Solution
 
 <details>
 
 <summary><code>src/ducks/chart.js</code></summary>
 
-```javascript
-const ADD_DATASET = "ADD_DATASET";
+```js
 const CREATE_CHART = "CREATE_CHART";
 const SET_ACTIVE_CHART_INDEX = "SET_ACTIVE_CHART_INDEX";
+const ADD_DATASET = "ADD_DATASET";
 
 const initialState = {
-	  activeChartIndex: 0
-	, charts: [ {
-		  labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ]
-		, name: "Example Chart"
-		, datasets: [
-			{
-				  label: "My First dataset"
-				, data: [65, 59, 90, 81, 56, 55, 40]
-			}
-			, {
-				  label: "My Second dataset"
-				, data: [28, 48, 40, 19, 96, 27, 100]
-			}
-		]
-	} ]
+  activeChartIndex: 0,
+  charts: [
+    {
+      labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange" ], 
+      name: "Example Chart", 
+      datasets: [
+        {
+          label: "My First dataset", 
+          data: [65, 59, 90, 81, 56, 55, 40]
+        },
+        {
+          label: "My Second dataset",
+          data: [28, 48, 40, 19, 96, 27, 100]
+        }
+      ]
+    }
+  ]
 };
 
 export default function chart( state = initialState, action ) {
-	switch ( action.type ) {
-		case ADD_DATASET: {
-			const { activeChartIndex, charts } = state;
-			const activeChart = charts[ activeChartIndex ];
-			return {
-				  activeChartIndex
-				, charts: [
-					  ...charts.slice( 0, activeChartIndex )
-					, Object.assign(
-						  {}
-						, activeChart
-						, { datasets: [ ...activeChart.datasets, action.dataset ] }
-					)
-					, ...charts.slice( activeChartIndex + 1, charts.length )
-				]
-			}
-		}
-		case CREATE_CHART:
-			return {
-				  activeChartIndex: 0
-				, charts: [ action.chart, ...state.charts ]
-			};
-		case SET_ACTIVE_CHART_INDEX:
-			return {
-				  activeChartIndex: action.index
-				, charts: state.charts
-			};
-		default: return state;
-	}
+  switch(action.type) {
+    case CREATE_CHART:
+      return {
+        activeChartIndex: 0,
+        charts: [ action.chart, ...state.charts ]
+      };
+    case SET_ACTIVE_CHART_INDEX:
+      return {
+        activeChartIndex: action.index,
+        charts: state.charts
+      }
+    case ADD_DATASET: {
+      const { activeChartIndex, charts } = state;
+      const activeChart = charts[ activeChartIndex ];
+      return {
+          activeChartIndex, 
+          charts: [
+            ...charts.slice( 0, activeChartIndex ), 
+            Object.assign({}, activeChart, { datasets: [ ...activeChart.datasets, action.dataset ] }), 
+            ...charts.slice( activeChartIndex + 1, charts.length )
+        ]
+      }
+    }
+    default:
+      return state;
+  }
 }
 
-export function addDataset( dataset ) {
-	return { dataset, type: ADD_DATASET };
+export function createChart(labels, name) {
+  return {
+    chart: { labels, name, datasets: [] },
+    type: CREATE_CHART
+  };
 }
 
-export function createChart( labels, name ) {
-	return {
-		  chart: { labels, name, datasets: [] }
-		, type: CREATE_CHART
-	}
+export function setActiveChartIndex(index) {
+  return {
+    index,
+    type: SET_ACTIVE_CHART_INDEX
+  }
 }
 
-export function setActiveChartIndex( index ) {
-	return { index, type: SET_ACTIVE_CHART_INDEX };
+export function addDataset(dataset) {
+  return {
+    dataset,
+    type: ADD_DATASET
+  }
 }
-
 ```
 
 </details>
+
+## Step 15
+
+### Summary
+
+In this step we will connect our `addDataset` action creator in the `App` component. We'll then `render` the `AddDataset` component in `App` and pass down the `addDataset` action creator as a prop to it.
+
+### Instructions
+
+* Open `src/components/App.js`.
+* Add `addDataset` to the `import` of action creators.
+* Add `addDataset` to the action creators object in the `connect` statement.
+* Destructure `addDataset` from `App`'s props in the `render` method.
+* Render the `AddDataset` component underneath the `ActiveChart` component.
+  * Add two props to the `AddDataset` component:
+    * `addDataset` - This should equal the `addDataset` action creator.
+    * `labels` - This should equal the array of labels from the `activeChart` prop.
+
+<details>
+
+<summary> Detailed Instructions </summary>
+
+<br />
+
+Let's begin by opening `src/components/App.js` and import the `addDataset` action creator so the `App` component can have access to it.
+
+```js
+import { createChart, setActiveChartIndex, addDataset } from '../ducks/chart';
+```
+
+Now let's add `addDataset` as another property to the action creator object passed to `connect` so don't have to worry about calling `dispatch` when calling our `addDataset` action creator.
+
+```js
+export default connect(mapStateToProps, { createChart, setActiveChartIndex, addDataset })(App);
+```
+
+Now let's destructure `addDataset` from `props` in the `render` method so we don't have to refer to it as `this.props.addDataset`.
+
+```js
+const {
+  activeChart,
+  charts,
+  createChart,
+  setActiveChartIndex,
+  addDataset
+} = this.props;
+```
+
+We now have everything we need from our reducer and we can focus on our `AddDataset` component. Let's begin by adding the `AddDataset` component into `App`'s `render` method just below the `ActiveChart` component. This component should have two props: `addDataset` and `labels`. `addDataset` should equal our `addDataset` action creator and `labels` should equal the `activeChart`'s labels array.
+
+```jsx
+return (
+  <div className="app">
+    <Sidebar charts={ charts } setActiveChartIndex={ setActiveChartIndex } />
+    <main className="app__main">
+      <header className="app__header">
+        <h1 className="app__title">Categorizer</h1>
+
+        <div className="app__new-chart">
+          <NewChart createChart={ createChart } />
+        </div>
+      </header>
+      <div className="app__active-chart">
+        <ActiveChart chart={ activeChart } />
+        <AddDataset addDataset={ addDataset } labels={ activeChart.labels } />
+      </div>
+    </main>
+  </div>
+);
+```
+
+You should now be able to add datasets to charts.
+
+</details>
+
+### Solution
 
 <details>
 
@@ -1013,297 +2016,69 @@ import { connect } from "react-redux";
 
 import "./App.css";
 
-import { addDataset, createChart, setActiveChartIndex } from "../ducks/chart";
+import { createChart, setActiveChartIndex, addDataset } from '../ducks/chart';
 
-import ActiveChart from "./ActiveChart/ActiveChart";
-import AddDataset from "./AddDataset/AddDataset";
 import NewChart from "./NewChart/NewChart";
 import Sidebar from "./Sidebar/Sidebar";
+import ActiveChart from "./ActiveChart/ActiveChart";
+import AddDataset from './AddDataset/AddDataset';
 
 class App extends Component {
-	render() {
-		const {
-			  activeChart
-			, addDataset
-			, charts
-			, createChart
-			, setActiveChartIndex
-		} = this.props;
+  render() {
+    const {
+      activeChart,
+      charts,
+      createChart,
+      setActiveChartIndex,
+      addDataset
+    } = this.props;
+    
+    return (
+      <div className="app">
+        <Sidebar charts={ charts } setActiveChartIndex={ setActiveChartIndex } />
+        <main className="app__main">
+          <header className="app__header">
+            <h1 className="app__title">Categorizer</h1>
 
-		return (
-			<div className="app">
-				<Sidebar
-					charts={ charts }
-					setActiveChartIndex={ setActiveChartIndex }
-				/>
-				<main className="app__main">
-					<header className="app__header">
-						<h1 className="app__title">Categorizer</h1>
-
-						<div className="app__new-chart">
-							<NewChart createChart={ createChart } />
-						</div>
-					</header>
-					<div className="app__active-chart">
-						<ActiveChart chart={ activeChart } />
-						<AddDataset
-							addDataset={ addDataset }
-							labels={ activeChart.labels }
-						/>
-					</div>
-				</main>
-			</div>
-		);
-	}
+            <div className="app__new-chart">
+              <NewChart createChart={ createChart } />
+            </div>
+          </header>
+          <div className="app__active-chart">
+            <ActiveChart chart={ activeChart } />
+            <AddDataset addDataset={ addDataset } labels={ activeChart.labels } />
+          </div>
+        </main>
+      </div>
+    );
+  }
 }
 
 function mapStateToProps( { activeChartIndex, charts } ) {
-	return {
-		  activeChart: charts[ activeChartIndex ]
-		, charts
-	};
+  return {
+    activeChart: charts[ activeChartIndex ],
+    charts: charts
+  };
 }
 
-export default connect( mapStateToProps, { addDataset, createChart, setActiveChartIndex } )( App );
-
+export default connect(mapStateToProps, { createChart, setActiveChartIndex, addDataset })(App);
 ```
 
 </details>
 
-</details>
-
-### Step 6
-
-**Summary**
-
-In this step we will be updating the `AddDataset` component so a user can add data to their charts.
-
-**Instructions**
-
-* Alter the `AddDataset` component to display a dynamic list of `input`s based on a chart's labels
-* Alter the `AddDataset` component to handle user input and allow submitting of datasets
-
-**Detailed Instructions**
-
-This step will take place in `src/components/AddDataset/AddDataset.js`. We'll get started by creating a `constructor` method and creating an initial state. Normally we would create a property on state for each input, but we could have any number of inputs. How should we set up state to handle a dynamic number of inputs? In our case, we'll use an array.
-
-`this.state` should have two properties:
-
-* `label` - The name of the dataset currently being created, corresponds to our one static input. Defaults to an empty string
-* `data` - The array where we will be storing values for the dataset. It will default to `new Array( props.labels.length ).fill( 0 )`. This will create an array with a length equal to the length of our data labels, then fill each index with `0`.
-
-With our `state` set up, let's jump into `render` and create the dynamic data inputs. Destructure `labels` from `this.props` as well as `data` and `label` from `this.state`. Create a new variable `labelInputs` and set it equal to the result of `map`ping over `labels` and returning the following JSX:
-
-```jsx
-<div
-	className="add-dataset__form-group"
-	key={ label }
->
-	<label className="add-dataset__label">{ label }:</label>
-	<input
-		className="add-dataset__input"
-		max="100"
-		min="0"
-		required
-		type="number"
-		// Here is where we connect to this.state
-		// If we ever re-ordered our list this wouldn't work!
-		// Can you think of a solution that works even if the
-		// list were to be sorted or reversed?
-		value={ data[ index ] }
-	/>
-</div>
-```
-
-Render `labelInputs` just below the `div` with a class of `add-dataset__form-group`. While we're here, let's update the "Dataset Label" input. Pass the input a `value` prop set equal to `label`.
-
-Now we've got a list of inputs all defaulting to 0, let's write a method to edit them! Create a new method `handleDataChange` that takes two paremeters:
-
-* `changedIndex` - The index of the data input that changed
-* `event` - The DOM event that triggered the change handler and carries the new value
-
-This method will work in a very similar way as the `ADD_DATASET` handler in our `chart` reducer. We need to grab a copy of all the elements before the changed index, insert the updated value, and grab a copy of all the elements after the changed index. It will look something like this:
-
-```javascript
-handleDataChange( changedIndex, event ) {
-	const { data } = this.state;
-	this.setState( {
-		data: [
-			  ...data.slice( 0, changedIndex )
-			, parseInt( event.target.value, 10 )
-			, ...data.slice( changedIndex + 1, data.length )
-		]
-	} );
-}
-```
-
-We'll also need a method to handle a change from the label input. `handleLabelChange` will take a single `event` parameter and will update `label` on state to equal `event.target.value`.
-
-Bind `handleLabelChange` in the constructor and pass it to the appropriate input's `onChange` prop. Pass `handleDataChange` to the data inputs, binding in `render` and passing `index` as an argument: `onChange={ this.handleDataChange.bind( this, index ) }`.
-
-Lastly we need to be able to submit these datasets to Redux. Create a method `handleSubmit` that takes in an `event` parameter. This method will do the following:
-
-* Call `event.preventDefault` to stop the browser from taking its default action
-* Destructure `data` and `label` from `this.state`
-* Destructure `addDataset` and `labels` from `this.props`
-* Call the `addDataSet` action creator, passing an object with two properties as an argument
-	* `data` - Set equal to `data.map( datum => parseInt( datum, 10 ) )`
-	* `label` - Set equal to the `label` variable
-* Reset state back to its initial value
-
-Finally, bind `handleSubmit` in the constructor and pass it to the `form` element's `onSubmit` prop. You should now be able to create charts, navigate between charts, add datasets to existing charts, and see those datasets display!
-
-**But wait! A bug?**
-
-Uh oh, it looks like creating a chart with more labels than the active chart doesn't work properly! The extra inputs won't be given a default value and React will throw some angry warnings. What is happening here?
-
-The constructor is only invoked once, when the component is first created. This means that we are only creating the `data` array on state a single time, it never updates. To fix this we need to make use of one of React's lifecycle methods - `componentWillReceiveprops`. `componentWillReceiveProps` is called whenever props are passed to the component and takes a single argument `nextProps` - the new props being passed. What we need to do is check if `nextProps` does not equal `this.props`, and update `this.state.data` accordingly. It will look like this:
-
-```javascript
-componentWillReceiveProps( nextProps ) {
-	if ( nextProps !== this.props ) {
-		this.setState( { data: new Array( nextProps.labels.length ).fill( 0 ) } );
-	}
-}
-```
-
-Bug fixed! We're all done here!
-
-<details>
-
-<summary><b>Code Solution</b></summary>
-
-```jsx
-// src/components/AddDataset/AddDataset.js
-import React, { Component, PropTypes } from "react";
-
-import "./AddDataset.css";
-
-export default class AddDataset extends Component {
-	static propTypes = {
-		  addDataset: PropTypes.func.isRequired
-		, labels: PropTypes.arrayOf( PropTypes.string ).isRequired
-	};
-
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			  data: new Array( props.labels.length ).fill( 0 )
-			, label: ""
-		};
-
-		this.handleLabelChange = this.handleLabelChange.bind( this );
-		this.handleSubmit = this.handleSubmit.bind( this );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps !== this.props ) {
-			this.setState( { data: new Array( nextProps.labels.length ).fill( 0 ) } );
-		}
-	}
-
-	handleDataChange( changedIndex, event ) {
-		const { data } = this.state;
-		this.setState( {
-			data: [
-				  ...data.slice( 0, changedIndex )
-				, parseInt( event.target.value, 10 )
-				, ...data.slice( changedIndex + 1, data.length )
-			]
-		} );
-	}
-
-	handleLabelChange( event ) {
-		this.setState( { label: event.target.value } );
-	}
-
-	handleSubmit( event ) {
-		event.preventDefault();
-
-		const { data, label } = this.state;
-		const { addDataset, labels } = this.props;
-
-		addDataset( { data: data.map( datum => parseInt( datum, 10 ) ), label } );
-
-		this.setState( {
-			  data: new Array( labels.length ).fill( 0 )
-			, label: ""
-		} );
-	}
-
-	render() {
-		const { labels } = this.props;
-		const { data, label } = this.state;
-
-		const labelInputs = labels.map( ( label, index ) => (
-			<div
-				className="add-dataset__form-group"
-				key={ label }
-			>
-				<label className="add-dataset__label">{ label }:</label>
-				<input
-					className="add-dataset__input"
-					max="100"
-					min="0"
-					onChange={ this.handleDataChange.bind( this, index ) }
-					required
-					type="number"
-					value={ data[ index ] }
-				/>
-			</div>
-		) );
-
-		return (
-			<form
-				className="add-dataset"
-				onSubmit={ this.handleSubmit }
-			>
-				<h3 className="add-dataset__header">Add Dataset</h3>
-				<div className="add-dataset__form-group">
-					<label className="add-dataset__label">Dataset Label:</label>
-					<input
-						className="add-dataset__input"
-						onChange={ this.handleLabelChange }
-						required
-						type="text"
-						value={ label }
-					/>
-				</div>
-				{ labelInputs }
-				<button
-					className="add-dataset__submit"
-					type="submit"
-				>
-					Submit
-				</button>
-			</form>
-		);
-	}
-}
-```
-
-</details>
-
-### Black Diamond
+## Black Diamond
 
 * Right now all data is lost on refresh, look into using [`localStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) to save a user's data.
 * Currently the color of datasets is randomized. Try allowing users to [select colors](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color) for their datasets.
 
 ## Contributions
 
-### Contributions
-
-#### 
- 
 If you see a problem or a typo, please fork, make the necessary changes, and create a pull request so we can review your changes and merge them into the master repo and branch.
 
 ## Copyright
 
-### Copyright
-
-#### 
-
 © DevMountain LLC, 2017. Unauthorized use and/or duplication of this material without express and written permission from DevMountain, LLC is strictly prohibited. Excerpts and links may be used, provided that full and clear credit is given to DevMountain with appropriate and specific direction to the original content.
 
+<p align="center">
 <img src="https://devmounta.in/img/logowhiteblue.png" width="250">
+</p>
