@@ -2,7 +2,7 @@
 
 # Project Summary
 
-During this project we'll be building a web application that allows for categorizing information in radar charts. We'll build out two main components to make our web application work. The component that allows for making new charts and the component that displays a list of the created charts and allows us to navigate between charts. The component for adding `datasets` to charts will already be built out for us. However, we will create the reducer code that the component will use. The radar chart will also already be setup for us. We'll just need to pass the correct data to its component. To keep track of data and pass it to the correct components we'll make heavy use of Redux and React Redux.
+During this project, we'll be building a web application that allows for categorizing information in radar charts. We'll build out two main components to make our web application work. The component that allows for making new charts and the component that displays a list of the created charts and allows us to navigate between charts. The component for adding `datasets` to charts will already be built out for us. However, we will create the reducer code that the component will use. The radar chart will also already be setup for us. We'll just need to pass the correct data to its component. To keep track of data and pass it to the correct components we'll make heavy use of Redux and React Redux.
 
 The following diagram can serve as a useful reference point on how data is flowing in the application if you ever get a little lost.
 <img src="https://raw.githubusercontent.com/DevMountain/categorizer/solution/readme_assets/categorizer-redux-flow.png" />
@@ -23,7 +23,7 @@ The following diagram can serve as a useful reference point on how data is flowi
 
 ### Summary
 
-In this step we'll download the necessary packages to use Redux and create a reducer for our charts.
+In this step, we'll download the necessary packages to use Redux and create a reducer for our charts.
 
 ### Instructions
 
@@ -70,7 +70,7 @@ In this step we'll download the necessary packages to use Redux and create a red
 
 Let's begin by installing the following dependencies we'll need in order to use Redux with our react application. Open up a third terminal window/tab and make sure you are still in the root directory of the project and then run `npm install redux react-redux`.
 
-While the install is happening open the `ducks` folder ( `src/ducks` ) and create a file called `chart.js`. This is where we'll create our reducer, action types, action creators, and the initial state for our reducer. 
+While the install is happening, open the `ducks` folder ( `src/ducks` ) and create a file called `chart.js`. This is where we'll create our reducer, action types, action creators, and the initial state for our reducer. 
 
 Now let's open `src/ducks/chart.js` and start by creating an `initialState` variable. `initialState` should be an object with two properties: `activeChartIndex` and `charts`.
 
@@ -214,7 +214,7 @@ export default function chart( state = initialState, action ) {
 
 ### Summary
 
-In this step we'll create a store that will use the reducer we made in the previous step.
+In this step, we'll create a store that will use the reducer we made in the previous step.
 
 ### Instructions
 
@@ -240,7 +240,7 @@ import chart from './ducks/chart';
 export default createStore(chart);
 ```
 
-Basically Redux is creating the store and calling our reducer `chart` with `undefined` and a dummy action as arguments. This will then cause our reducer to return the `initialState` variable and give our store an initial state.
+Basically, Redux is creating the store and calling our reducer `chart` with `undefined` and a dummy action as arguments. This will then cause our reducer to return the `initialState` variable and give our store an initial state.
 
 </details>
 
@@ -263,7 +263,7 @@ export default createStore( chart );
 
 ### Summary
 
-In this step we'll connect Redux to our application in `index.js`.
+In this step, we'll connect Redux to our application in `index.js`.
 
 ### Instructions
 
@@ -287,7 +287,7 @@ import { Provider } from 'react-redux';
 import store from './store.js';
 ```
 
-Now that we have our `store` and `Provider` component let's wrap the `App` component with the `Provider` component. We'll also need to add a `store` prop to `Provider`. The `store` prop should equal the `store` we imported earlier. This will give our application access to the Redux store.
+Now that we have our `store` and `Provider` component, let's wrap the `App` component with the `Provider` component. We'll also need to add a `store` prop to `Provider`. The `store` prop should equal the `store` we imported earlier. This will give our application access to the Redux store.
 
 ```js
 ReactDOM.render(
@@ -332,7 +332,7 @@ ReactDOM.render(
 
 ### Summary
 
-In this step we will connect the `App` component definition to Redux.
+In this step, we will connect the `App` component definition to Redux.
 
 ### Instructions
 
@@ -398,7 +398,7 @@ function mapStateToProps( { activeChartIndex, charts } ) {
 }
 ```
 
-To finish connecting the `App` component definition we need to create a decorator by invoking `connect` and passing in `mapStateToProps`. This will return a function we need to then invoke and pass in our `App` component. Finally we'll then want to modify our `export` statement to equal the `decoratedComponent` instead of `App`. 
+To finish connecting the `App` component definition, we need to create a decorator by invoking `connect` and passing in `mapStateToProps`. This will return a function we need to then invoke and pass in our `App` component. Finally, we'll then want to modify our `export` statement to equal the `decoratedComponent` instead of `App`. 
 
 Decorators can be created one of two ways:
 
@@ -473,7 +473,7 @@ export default connect(mapStateToProps)(App);
 
 ### Summary 
 
-In this step we are going to dive deeper into the flow of data to remove any layers of abstraction that might have appeared. If you feel confident in the flow of data up to this point, feel free to skip this step.
+In this step, we are going to dive deeper into the flow of data to remove any layers of abstraction that might have appeared. If you feel confident in the flow of data up to this point, feel free to skip this step.
 
 <details>
 
@@ -521,12 +521,12 @@ In the following giphy take note of which file the debugger is currently in:
 
 ### Summary
 
-In this step we will be creating our first action type and action creator for creating new charts. We'll then update our reducer to handle our first action by returning a brand new state object. 
+In this step, we will be creating our first action type and action creator for creating new charts. We'll then update our reducer to handle our first action by returning a brand new state object. 
 
 ### Instructions
 
 * Open `src/ducks/chart.js`.
-* Create a `CREATE_CHART` action type at the top of the file that equals "CREATE_CHART".
+* Create a `CREATE_CHART` action type at the top of the file, that equals "CREATE_CHART".
 * Create a `createChart` action creator underneath the `chart` reducer:
   * This function should take two parameters:
     * `labels` - An array of labels that the chart will have.
@@ -673,7 +673,7 @@ export function createChart(labels, name) {
 
 ### Summary
 
-In this step we'll import the `createChart` action creator into the `App` component, connect our action creator, and then pass it down as a `prop` into our `NewChart` component.
+In this step, we'll import the `createChart` action creator into the `App` component, connect our action creator, and then pass it down as a `prop` into our `NewChart` component.
 
 ### Instructions
 
@@ -700,13 +700,13 @@ Let's begin by opening `src/components/App.js`. At the top of the file, just aft
 import { createChart } from '../ducks/chart';
 ```
 
-Now that `App.js` has access to our action creator we need a way for our `App` component to dispatch this action to our reducer. We can do this by adding an object after `mapStateToProps` where we export our decorated component.
+Now that `App.js` has access to our action creator, we need a way for our `App` component to dispatch this action to our reducer. We can do this by adding an object after `mapStateToProps` where we export our decorated component.
 
 ```js
 export default connect(mapStateToProps, { createChart })(App);
 ```
 
-Basically this is allowing us to directly call `this.props.createChart` inside of our `App` component. Without doing it this way, you would have to use the `dispatch` function with the action creator as a parameter. Redux automatically adds the `dispatch` function to `props`. It would look like: `this.props.dispatch(this.props.createChart)`. 
+Basically, this is allowing us to directly call `this.props.createChart` inside of our `App` component. Without doing it this way, you would have to use the `dispatch` function with the action creator as a parameter. Redux automatically adds the `dispatch` function to `props`. It would look like: `this.props.dispatch(this.props.createChart)`. 
 
 Also another thing to note is that once we create this object of action creators, `dispatch` is no longer automatically added to `props`. Any future action creators will have to be added to this object as well in order to be used in the `App` component.
 
@@ -742,7 +742,7 @@ function wrapActionCreator( actionCreatorsObject ) {
 
 <br />
 
-Now that our action creator is ready to be used let's pass it down as a `prop` to our `NewChart` component. Before we pass down our prop let's add `createChart` to our deconstruction of `props` at the top of the `render` method. This will allow us to avoid having to use `this.props.propNameHere` every time we want to refer to a prop.
+Now that our action creator is ready to be used, let's pass it down as a `prop` to our `NewChart` component. Before we pass down our prop, let's add `createChart` to our deconstruction of `props` at the top of the `render` method. This will allow us to avoid having to use `this.props.propNameHere` every time we want to refer to a prop.
 
 ```js
 render() {
@@ -823,7 +823,7 @@ export default connect(mapStateToProps, { createChart })(App);
 
 ### Summary
 
-In this step we will start making our `NewChart` component functional by creating a constructor method, state, and a `handleChange` method to handle user input.
+In this step, we will start making our `NewChart` component functional by creating a constructor method, state, and a `handleChange` method to handle user input.
 
 ### Instructions
 
@@ -855,7 +855,7 @@ In this step we will start making our `NewChart` component functional by creatin
 
 <br />
 
-Let's begin by opening `src/components/NewChart/NewChart.js`. Just above the `render` method add a `constructor` method that takes `props` as its first parameter. Then call super with `props` as a parameter inside the `constructor` method. After calling `super` create a `state` object with three properties:
+Let's begin by opening `src/components/NewChart/NewChart.js`. Just above the `render` method, add a `constructor` method that takes `props` as its first parameter. Then call super with `props` as a parameter inside the `constructor` method. After calling `super`, create a `state` object with three properties:
 
 * `labels` - A list of the labels submitted so far. It should default to an empty array.
 * `name` - The text from the name input. It should default to an empty string.
@@ -873,7 +873,7 @@ constructor( props ) {
 }
 ```
 
-Now that our initial state is ready to go for our `NewChart` component let's create a `handleChange` method. `handleChange` will have two parameters:
+Now that our initial state is ready to go for our `NewChart` component, let's create a `handleChange` method. `handleChange` will have two parameters:
 
 * `field` - The name of the field that is changing, in this case that will be `"name"` or `"newLabel"`.
 * `event` - The DOM event triggering the change and carrying the new value.
@@ -886,7 +886,7 @@ handleChange(field, event) {
 }
 ```
 
-Now that our `handleChange` method is created let's bind `this` and the field we want to change to it at the bottom of the `constructor` method. We'll want to make two different variants of `handleChange`. One for updating `name` and one for updating `label`. Let's call them `handleNameChange` and `handleLabelChange`.
+Now that our `handleChange` method is created, let's bind `this` and the field we want to change to it at the bottom of the `constructor` method. We'll want to make two different variants of `handleChange`. One for updating `name` and one for updating `label`. Let's call them `handleNameChange` and `handleLabelChange`.
 
 ```javascript
 constructor( props ) {
@@ -1021,7 +1021,7 @@ export default class NewChart extends Component {
 
 ### Summary
 
-In this step we will continue to make our `NewChart` component functional by handling adding new `labels`.
+In this step, we will continue to make our `NewChart` component functional by handling adding new `labels`.
 
 ### Instructions
 
@@ -1168,7 +1168,7 @@ You should now be able to go into your app and try putting in labels by typing i
 
 ### Summary
 
-In this step we will finish the functionality for our `NewChart` component by sending data to our reducer through the prop `createChart`.
+In this step, we will finish the functionality for our `NewChart` component by sending data to our reducer through the prop `createChart`.
 
 ### Instructions
 
@@ -1227,7 +1227,7 @@ submitChart() {
 }
 ```
 
-Now that our method is built let's `bind` `this` to it at the bottom of the `constructor` method.
+Now that our method is built, let's `bind` `this` to it at the bottom of the `constructor` method.
 
 ```js
 this.submitChart = this.submitChart.bind( this );
@@ -1345,7 +1345,7 @@ export default class NewChart extends Component {
 
 ### Summary
 
-In this step we will be rendering the active chart.
+In this step, we will be rendering the active chart.
 
 ### Instructions
 
@@ -1462,7 +1462,7 @@ export default connect(mapStateToProps, { createChart })(App);
 
 ### Summary
 
-In this step we will update our `chart` reducer to handle an action for setting the new active chart.
+In this step, we will update our `chart` reducer to handle an action for setting the new active chart.
 
 ### Instructions
 
@@ -1486,13 +1486,13 @@ In this step we will update our `chart` reducer to handle an action for setting 
 
 <br />
 
-Let's being by opening `src/ducks/chart.js`. At the top of the file create a new action type of `SET_ACTIVE_CHART_INDEX` and set it equal to `"SET_ACTIVE_CHART_INDEX"`.
+Let's being by opening `src/ducks/chart.js`. At the top of the file, create a new action type of `SET_ACTIVE_CHART_INDEX` and set it equal to `"SET_ACTIVE_CHART_INDEX"`.
 
 ```js
 const SET_ACTIVE_CHART_INDEX = "SET_ACTIVE_CHART_INDEX";
 ```
 
-Underneath the reducer create a `setActiveChartIndex` action creator that takes a single parameter: `index`. This action creator should return an object with two properties: `index` and `type`. `index` should equal the passed in `index` and `type` should equal `SET_ACTIVE_CHART_INDEX` ( the action type we just created ). 
+Underneath the reducer, create a `setActiveChartIndex` action creator that takes a single parameter: `index`. This action creator should return an object with two properties: `index` and `type`. `index` should equal the passed in `index` and `type` should equal `SET_ACTIVE_CHART_INDEX` ( the action type we just created ). 
 
 ```js
 export function setActiveChartIndex(index) {
@@ -1583,7 +1583,7 @@ export function setActiveChartIndex(index) {
 
 ### Summary
 
-In this step we will update our `SideBar` component to display a list of charts that have been created. This will allow us to navigate between created charts.
+In this step, we will update our `SideBar` component to display a list of charts that have been created. This will allow us to navigate between created charts.
 
 ### Instructions
 
@@ -1680,7 +1680,7 @@ Inside of the `<ul>` elment let's create our map by breaking out of JSX with `{ 
 </ul>
 ```
 
-Inside the map return the following JSX:
+Inside the map, return the following JSX:
 
 ```jsx
 <ul className="sidebar__past-charts">
@@ -1748,7 +1748,7 @@ Sidebar.propTypes = {
 
 ### Summary
 
-In this step we will update our `chart` reducer to handle an action for adding new datasets to a chart.
+In this step, we will update our `chart` reducer to handle an action for adding new datasets to a chart.
 
 ### Instructions
 
@@ -1782,7 +1782,7 @@ Let's begin by opening `src/ducks/chart.js`. Create a new action type of `ADD_DA
 const ADD_DATASET = "ADD_DATASET";
 ```
 
-Underneath the reducer create and export the corresponding action creator: `addDataset`. `addDataset` will take a single parameter `dataset` and should return an object with two properties:
+Underneath the reducer, create and export the corresponding action creator: `addDataset`. `addDataset` will take a single parameter `dataset` and should return an object with two properties:
 
 * `dataset` - This will be an array of numbers that corresponds to the labels on the chart. This should equal the value of the `dataset` parameter.
 * `type` - Should equal our action type: `ADD_DATASET`.
@@ -1796,7 +1796,7 @@ export function addDataset(dataset) {
 }
 ```
 
-Lastly we need to update the reducer to handle this action. Add a `case` checking the `action.type` against `ADD_DATASET`. For this `case` we will need to return a new object where `activeChartIndex` is set equal to `state.activeChartIndex` and `charts` is is a copy of `state.charts` with the new dataset added to the active chart. 
+Lastly, we need to update the reducer to handle this action. Add a `case` checking the `action.type` against `ADD_DATASET`. For this `case` we will need to return a new object where `activeChartIndex` is set equal to `state.activeChartIndex` and `charts` is is a copy of `state.charts` with the new dataset added to the active chart. 
 
 We'll need to use a local variable to accomplish this so let's wrap our `case` in `{ }` to avoiding any scoping issues. Our local variable will be called `activeChart` and it should equal the chart object of the chart that is currently active. 
 
@@ -1809,7 +1809,7 @@ case ADD_DATASET: {
 }
 ```
 
-Now that we know which chart is active we can create a new object for it that has the new dataset added to it. Remember that we also want to return the `activeChartIndex` and all charts before and after the active chart.
+Now that we know which chart is active, we can create a new object for it that has the new dataset added to it. Remember that we also want to return the `activeChartIndex` and all charts before and after the active chart.
 
 ```js
 case ADD_DATASET: {
@@ -1825,9 +1825,9 @@ case ADD_DATASET: {
 }
 ```
 
-There is a lot going on here, let's break it down. We start by creating a new array for `charts`. Next we want to keep the charts in the same order so we need to put all the charts before the active chart at the beginning of the `charts` array. Using the `ES2015` spread operator we can combine it with `slice` to get all the charts up until our active chart. Then we can insert our active chart as a <b>new</b> object that has `datasets` modified to be an array of all the previous `datasets` with our new `dataset` from `action` at the end of the array. Then using the spread operator again we can get all the charts after our active chart and add it to the end of `charts` array.
+There is a lot going on here, let's break it down. We start by creating a new array for `charts`. Next we want to keep the charts in the same order, so we need to put all the charts before the active chart at the beginning of the `charts` array. Using the `ES2015` spread operator, we can combine it with `slice` to get all the charts up until our active chart. Then we can insert our active chart as a <b>new</b> object that has `datasets` modified to be an array of all the previous `datasets` with our new `dataset` from `action` at the end of the array. Then using the spread operator again we can get all the charts after our active chart and add it to the end of `charts` array.
 
-In addition to this we can also deconstruct state so we don't have to use `state.` every where. Our final solution would look like:
+In addition to this, we can also deconstruct state so we don't have to use `state.` every where. Our final solution would look like:
 
 ```js
 case ADD_DATASET: {
@@ -1934,7 +1934,7 @@ export function addDataset(dataset) {
 
 ### Summary
 
-In this step we will connect our `addDataset` action creator in the `App` component. We'll then `render` the `AddDataset` component in `App` and pass down the `addDataset` action creator as a prop to it.
+In this step, we will connect our `addDataset` action creator in the `App` component. We'll then `render` the `AddDataset` component in `App` and pass down the `addDataset` action creator as a prop to it.
 
 ### Instructions
 
