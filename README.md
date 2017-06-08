@@ -1753,7 +1753,7 @@ In this step, we will update our `chart` reducer to handle an action for adding 
 ### Instructions
 
 * Open `src/ducks/chart/js`.
-* Create an action type called `ADD_DATASET` that equals `"ADD_DATA_SET"`.
+* Create an action type called `ADD_DATASET` that equals `"ADD_DATASET"`.
 * Create and export an action creator called `addDataset`:
   * This function should take in one parameter:
     * `dataset` - This will be an array of numbers that correspond to the labels on the chart.
